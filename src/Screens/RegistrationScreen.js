@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import Svg, { Circle, Path } from "react-native-svg";
 
 import {
   StyleSheet,
@@ -14,14 +15,25 @@ import {
 } from "react-native";
 
 const initialState = {
+  name: "",
   email: "",
   password: "",
 };
 
-export default function LoginScreen({ navigation }) {
+export default function App() {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [state, setState] = useState(initialState);
   const [isSecureTextEntry, IsSecureTextEntry] = useState(true);
+
+  useEffect(() => {
+    const hideKeyboard = Keyboard.addListener("keyboardDidHide", () => {
+      setIsShowKeyboard(false);
+    });
+
+    return () => {
+      hideKeyboard.remove();
+    };
+  }, []);
 
   const keyboardHide = () => {
     setIsShowKeyboard(false);
@@ -38,11 +50,38 @@ export default function LoginScreen({ navigation }) {
       <View style={styles.container}>
         <ImageBackground
           style={styles.image}
-          source={require("../assets/img/background.png")}
+          source={require("../../assets/img/background.png")}
         >
           <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            behavior={Platform.OS === "ios" ? "padding" : "null"}
           >
+            <View style={styles.avatarWrap}>
+              <View style={styles.avatarBox}>
+                <TouchableOpacity style={styles.addBtnBox}>
+                  <Svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="25"
+                    height="25"
+                    fill="none"
+                    viewBox="0 0 25 25"
+                  >
+                    <Circle
+                      cx="12.5"
+                      cy="12.5"
+                      r="12"
+                      fill="none"
+                      stroke="#FF6C00"
+                    ></Circle>
+                    <Path
+                      fill="#FF6C00"
+                      fillRule="evenodd"
+                      d="M13 6h-1v6H6v1h6v6h1v-6h6v-1h-6V6z"
+                      clipRule="evenodd"
+                    ></Path>
+                  </Svg>
+                </TouchableOpacity>
+              </View>
+            </View>
             <View
               style={{
                 ...styles.form,
@@ -50,13 +89,29 @@ export default function LoginScreen({ navigation }) {
               }}
             >
               <View style={styles.header}>
-                <Text style={styles.headerTitle}>Войти</Text>
+                <Text style={styles.headerTitle}>Регистрация</Text>
               </View>
               <View style={{ marginBottom: 16 }}>
                 {/* <Text style={styles.inputTitle}>Email</Text> */}
                 <TextInput
                   style={styles.input}
-                  textAlign={"center"}
+                  textAlign={"left"}
+                  placeholder="Логин"
+                  autoComplete="off"
+                  placeholderTextColor="#BDBDBD"
+                  onFocus={() => setIsShowKeyboard(true)}
+                  value={state.name}
+                  onChangeText={(value) =>
+                    setState((prevState) => ({ ...prevState, name: value }))
+                  }
+                />
+              </View>
+              <View style={{ marginBottom: 16 }}>
+                {/* <Text style={styles.inputTitle}>Email</Text> */}
+                <TextInput
+                  style={styles.input}
+                  keyboardType="email-address"
+                  textAlign={"left"}
                   placeholder="Адрес электронной почты"
                   placeholderTextColor="#BDBDBD"
                   onFocus={() => setIsShowKeyboard(true)}
@@ -66,14 +121,14 @@ export default function LoginScreen({ navigation }) {
                   }
                 />
               </View>
-              <View style={{ marginBottom: 40 }}>
+              <View style={{ marginBottom: 43 }}>
                 {/* <Text style={styles.inputTitle}>Password</Text> */}
                 <TextInput
                   style={styles.input}
-                  textAlign={"center"}
+                  textAlign={"left"}
                   placeholder="Пароль"
                   placeholderTextColor="#BDBDBD"
-                  secureTextEntry={true}
+                  secureTextEntry={isSecureTextEntry}
                   onFocus={() => setIsShowKeyboard(true)}
                   value={state.password}
                   onChangeText={(value) =>
@@ -96,15 +151,13 @@ export default function LoginScreen({ navigation }) {
                 activeOpacity={0.8}
                 onPress={keyboardHideAndSubmit}
               >
-                <Text style={styles.btnTitle}>Войти</Text>
+                <Text style={styles.btnTitle}>Зарегистрироваться</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 activeOpacity={0.5}
-                onPress={() => navigation.navigate("Registration")}
+                onPress={keyboardHideAndSubmit}
               >
-                <Text style={styles.noAccText}>
-                  Нет аккаунта? Зарегистрироваться
-                </Text>
+                <Text style={styles.haveAccText}>Уже есть аккаунт? Войти</Text>
               </TouchableOpacity>
             </View>
           </KeyboardAvoidingView>
@@ -124,7 +177,6 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   input: {
-    textAlign: "left",
     height: 50,
     color: "#212121",
     borderWidth: 1,
@@ -138,12 +190,12 @@ const styles = StyleSheet.create({
   },
   form: {
     backgroundColor: "#ffffff",
-    paddingTop: 32,
+    paddingTop: 92,
     paddingHorizontal: 16,
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
-    height: 489,
-    marginBottom: 0,
+    height: 549,
+    //     position: "relative",
   },
   inputTitle: {
     color: "#fff",
@@ -172,15 +224,34 @@ const styles = StyleSheet.create({
     lineHeight: 35,
     color: "#212121",
   },
-  noAccText: {
+  haveAccText: {
     fontSize: 16,
     lineHeight: 19,
     textAlign: "center",
     color: "#1B4371",
   },
-  showPasswordBox: {
-    bottom: 288,
+  avatarBox: {
+    height: 120,
+    width: 120,
+    backgroundColor: "#F6F6F6",
+    borderRadius: 16,
+  },
+  avatarWrap: {
+    position: "absolute",
+    right: 0,
+    left: 0,
+    top: -60,
+    alignItems: "center",
+    zIndex: 1,
+  },
+  addBtnBox: {
+    position: "absolute",
+    right: -12,
+    bottom: 14,
+  },
 
+  showPasswordBox: {
+    bottom: 222,
     right: 32,
     position: "absolute",
   },
