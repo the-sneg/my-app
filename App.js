@@ -12,10 +12,10 @@ export default function App() {
       const width = Dimensions.get("window").width;
       console.log("width:", width);
     };
-    Dimensions.addEventListener("change", onChange);
+    const widthChange = Dimensions.addEventListener("change", onChange);
 
-    return function remove() {
-      rl.removeEventListener("change", onChange);
+    return () => {
+      widthChange.remove();
     };
   }, []);
 
