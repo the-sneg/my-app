@@ -12,7 +12,6 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
 } from "react-native";
-import { useRoute } from "../../../router";
 
 const initialState = {
   email: "",
@@ -41,7 +40,7 @@ export default function LoginScreen({ navigation }) {
   const keyboardHideAndSubmit = () => {
     keyboardHide();
     setState(initialState);
-
+    navigation.navigate("Home");
     console.log(state);
   };
 

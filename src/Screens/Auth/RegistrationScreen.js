@@ -42,6 +42,7 @@ export default function RegistrationScreen({ navigation }) {
   const keyboardHideAndSubmit = () => {
     keyboardHide();
     setState(initialState);
+    navigation.navigate("Home");
     console.log(state);
   };
 

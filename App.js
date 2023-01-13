@@ -18,7 +18,7 @@ export default function App() {
     };
   }, []);
 
-  const routing = useRoute(null);
+  const routing = useRoute();
 
   const [fontsLoaded] = useFonts({
     "DMMono-Medium": require("./assets/fonts/DMMono-Medium.ttf"),
