@@ -1,10 +1,9 @@
-import LoginScreen from "./src/Screens/LoginScreen";
-import RegistrationScreen from "./src/Screens/RegistrationScreen";
 import { View, Dimensions, Text } from "react-native";
-
+import { NavigationContainer } from "@react-navigation/native";
 import { useCallback, useEffect } from "react";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
+import { useRoute } from "./router";
 
 export default function App() {
   useEffect(() => {
@@ -18,6 +17,8 @@ export default function App() {
       widthChange.remove();
     };
   }, []);
+
+  const routing = useRoute(null);
 
   const [fontsLoaded] = useFonts({
     "DMMono-Medium": require("./assets/fonts/DMMono-Medium.ttf"),
@@ -36,17 +37,13 @@ export default function App() {
   }
 
   return (
-    <>
-      <View
-        style={{
-          flex: 1,
-        }}
-        onLayout={onLayoutRootView}
-      >
-        <LoginScreen />
-        {/* <RegistrationScreen /> */}
-        {/* <Text>sf</Text> */}
-      </View>
-    </>
+    <View
+      style={{
+        flex: 1,
+      }}
+      onLayout={onLayoutRootView}
+    >
+      <NavigationContainer>{routing}</NavigationContainer>
+    </View>
   );
 }

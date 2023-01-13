@@ -20,7 +20,7 @@ const initialState = {
   password: "",
 };
 
-export default function App() {
+export default function RegistrationScreen({ navigation }) {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [state, setState] = useState(initialState);
   const [isSecureTextEntry, IsSecureTextEntry] = useState(true);
@@ -50,7 +50,7 @@ export default function App() {
       <View style={styles.container}>
         <ImageBackground
           style={styles.image}
-          source={require("../../assets/img/background.png")}
+          source={require("../../../assets/img/background.png")}
         >
           <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : "null"}
@@ -153,12 +153,15 @@ export default function App() {
               >
                 <Text style={styles.btnTitle}>Зарегистрироваться</Text>
               </TouchableOpacity>
-              <TouchableOpacity
-                activeOpacity={0.5}
-                onPress={keyboardHideAndSubmit}
-              >
-                <Text style={styles.haveAccText}>Уже есть аккаунт? Войти</Text>
-              </TouchableOpacity>
+              <View style={{ flexDirection: "row", justifyContent: "center" }}>
+                <Text style={styles.haveAccText}>Уже есть аккаунт?</Text>
+                <TouchableOpacity
+                  activeOpacity={0.5}
+                  onPress={() => navigation.navigate("Login")}
+                >
+                  <Text style={styles.haveAccText}> Войти</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </KeyboardAvoidingView>
         </ImageBackground>

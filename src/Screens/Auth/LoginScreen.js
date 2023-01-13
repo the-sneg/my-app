@@ -12,6 +12,7 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
 } from "react-native";
+import { useRoute } from "../../../router";
 
 const initialState = {
   email: "",
@@ -40,6 +41,7 @@ export default function LoginScreen({ navigation }) {
   const keyboardHideAndSubmit = () => {
     keyboardHide();
     setState(initialState);
+
     console.log(state);
   };
 
@@ -48,7 +50,7 @@ export default function LoginScreen({ navigation }) {
       <View style={styles.container}>
         <ImageBackground
           style={styles.image}
-          source={require("../../assets/img/background.png")}
+          source={require("../../../assets/img/background.png")}
         >
           <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -73,7 +75,7 @@ export default function LoginScreen({ navigation }) {
                 {/* <Text style={styles.inputTitle}>Email</Text> */}
                 <TextInput
                   style={styles.input}
-                  textAlign={"center"}
+                  textAlign={"left"}
                   placeholder="Адрес электронной почты"
                   placeholderTextColor="#BDBDBD"
                   onFocus={() => setIsShowKeyboard(true)}
@@ -87,7 +89,7 @@ export default function LoginScreen({ navigation }) {
                 {/* <Text style={styles.inputTitle}>Password</Text> */}
                 <TextInput
                   style={styles.input}
-                  textAlign={"center"}
+                  textAlign={"left"}
                   placeholder="Пароль"
                   placeholderTextColor="#BDBDBD"
                   secureTextEntry={isSecureTextEntry}
@@ -115,14 +117,15 @@ export default function LoginScreen({ navigation }) {
               >
                 <Text style={styles.btnTitle}>Войти</Text>
               </TouchableOpacity>
-              <TouchableOpacity
-                activeOpacity={0.5}
-                onPress={keyboardHideAndSubmit}
-              >
-                <Text style={styles.noAccText}>
-                  Нет аккаунта? Зарегистрироваться
-                </Text>
-              </TouchableOpacity>
+              <View style={{ flexDirection: "row", justifyContent: "center" }}>
+                <Text style={styles.noAccText}>Нет аккаунта?</Text>
+                <TouchableOpacity
+                  activeOpacity={0.5}
+                  onPress={() => navigation.navigate("Registration")}
+                >
+                  <Text style={styles.noAccText}> Зарегистрироваться</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </KeyboardAvoidingView>
         </ImageBackground>
