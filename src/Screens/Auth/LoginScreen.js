@@ -162,7 +162,6 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
     height: 489,
-    marginBottom: 0,
   },
   inputTitle: {
     color: "#fff",

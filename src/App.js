@@ -21,9 +21,9 @@ export default function App() {
   const routing = useRoute();
 
   const [fontsLoaded] = useFonts({
-    "DMMono-Medium": require("./assets/fonts/DMMono-Medium.ttf"),
-    "DMMono-MediumItalic": require("./assets/fonts/DMMono-MediumItalic.ttf"),
-    "DMMono-Regular": require("./assets/fonts/DMMono-Regular.ttf"),
+    "DMMono-Medium": require("../assets/fonts/DMMono-Medium.ttf"),
+    "DMMono-MediumItalic": require("../assets/fonts/DMMono-MediumItalic.ttf"),
+    "DMMono-Regular": require("../assets/fonts/DMMono-Regular.ttf"),
   });
 
   const onLayoutRootView = useCallback(async () => {

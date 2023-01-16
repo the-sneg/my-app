@@ -2,10 +2,10 @@ import React, { useState } from "react";
 
 import { createStackNavigator } from "@react-navigation/stack";
 
-import LoginScreen from "./src/Screens/Auth/LoginScreen";
-import RegistrationScreen from "./src/Screens/Auth/RegistrationScreen";
+import LoginScreen from "./Screens/Auth/LoginScreen";
+import RegistrationScreen from "./Screens/Auth/RegistrationScreen";
 
-import Home from "./src/Screens/Main/Home";
+import Home from "./Screens/Main/Home";
 
 const AuthStack = createStackNavigator();
 
