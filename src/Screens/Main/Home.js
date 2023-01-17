@@ -8,11 +8,13 @@ import ProfileScreen from "./ProfileScreen";
 
 const MainTab = createBottomTabNavigator();
 import { Feather } from "@expo/vector-icons";
-import MapScreen from "../NestedScreens/MapScreen";
 
 export default function Home() {
   return (
-    <MainTab.Navigator screenOptions={{ tabBarShowLabel: false }}>
+    <MainTab.Navigator
+      screenOptions={{ tabBarShowLabel: false }}
+      backBehavior="order"
+    >
       <MainTab.Screen
         options={{
           headerTitleAlign: "center",
@@ -34,6 +36,9 @@ export default function Home() {
       />
       <MainTab.Screen
         options={{
+          tabBarStyle: { display: "none" },
+          headerTitleAlign: "center",
+          headerTitle: "Создать публикацию",
           tabBarIcon: ({ focused: boolean, color: red, size: number }) => (
             <Feather style={style.plus} name="plus" size={24} color="#ffffff" />
           ),
@@ -50,17 +55,6 @@ export default function Home() {
         name="Profile"
         component={ProfileScreen}
       />
-      {/* ??????????????????????????????????????????????????????????????????????? */}
-      <MainTab.Screen
-        options={{
-          tabBarIcon: ({ focused: boolean, color: red, size: number }) => (
-            <Feather name="user" size={24} color="rgba(33, 33, 33, 0.8)" />
-          ),
-        }}
-        name="Map"
-        component={MapScreen}
-      />
-      {/* //////////////////////////////??????????????????????????????????????????? */}
     </MainTab.Navigator>
   );
 }
