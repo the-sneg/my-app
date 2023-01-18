@@ -7,11 +7,16 @@ import {
   Image,
   Button,
   TextInput,
+  TouchableWithoutFeedback,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { Camera, CameraType } from "expo-camera";
 import * as Location from "expo-location";
 
 import { FontAwesome5 } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 
 export default function CreatePostScreen({ navigation }) {
   const [camera, setCamera] = useState(null);
@@ -22,6 +27,23 @@ export default function CreatePostScreen({ navigation }) {
 
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
+
+  const [isShowKeyboard, setIsShowKeyboard] = useState(false);
+
+  const keyboardHide = () => {
+    setIsShowKeyboard(false);
+    Keyboard.dismiss();
+  };
+
+  useEffect(() => {
+    const hideKeyboard = Keyboard.addListener("keyboardDidHide", () => {
+      setIsShowKeyboard(false);
+    });
+
+    return () => {
+      hideKeyboard.remove();
+    };
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -65,38 +87,61 @@ export default function CreatePostScreen({ navigation }) {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.cameraWrap}>
-        <Camera style={styles.camera} ref={setCamera} type={type}>
-          {photo && (
-            <View style={styles.photoContainer}>
-              <Image style={styles.photo} source={{ uri: photo }} />
+    <TouchableWithoutFeedback onPress={keyboardHide}>
+      <View style={styles.container}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "null"}
+        >
+          <View style={styles.Wrap}>
+            <View
+              style={{
+                ...styles.cameraWrap,
+                display: isShowKeyboard ? "none" : "flex",
+              }}
+            >
+              <Camera style={styles.camera} ref={setCamera} type={type}>
+                {photo && (
+                  <View style={styles.photoContainer}>
+                    <Image style={styles.photo} source={{ uri: photo }} />
+                  </View>
+                )}
+                <TouchableOpacity style={styles.snapWrap} onPress={takePhoto}>
+                  <FontAwesome5 name="camera" size={24} color="#BDBDBD" />
+                </TouchableOpacity>
+              </Camera>
             </View>
-          )}
-          <TouchableOpacity style={styles.snapWrap} onPress={takePhoto}>
-            <FontAwesome5 name="camera" size={24} color="#BDBDBD" />
-          </TouchableOpacity>
-        </Camera>
+            <TouchableOpacity style={{ width: 116 }} onPress={""}>
+              <Text style={styles.uploadPhoto}>Загрузите фото</Text>
+            </TouchableOpacity>
+            <View>
+              <TextInput
+                onFocus={() => setIsShowKeyboard(true)}
+                style={{ ...styles.input, marginBottom: 16 }}
+                placeholder="Название..."
+              ></TextInput>
+            </View>
+            <View>
+              <TextInput
+                onFocus={() => setIsShowKeyboard(true)}
+                style={{ ...styles.input, marginBottom: 32 }}
+                placeholder="Местность..."
+              ></TextInput>
+            </View>
+            <TouchableOpacity
+              style={{ ...styles.publishWrap, marginBottom: 16 }}
+              onPress={sendPhoto}
+            >
+              <Text style={styles.publish}>Опубликовать</Text>
+            </TouchableOpacity>
+            <View style={styles.deleteWrap}>
+              <TouchableOpacity style={styles.delete} onPress={""}>
+                <Feather name="trash-2" size={24} color="#DADADA" />
+              </TouchableOpacity>
+            </View>
+          </View>
+        </KeyboardAvoidingView>
       </View>
-      <TouchableOpacity style={""} onPress={""}>
-        <Text style={styles.uploadPhoto}>Загрузите фото</Text>
-      </TouchableOpacity>
-      <View>
-        <TextInput
-          style={{ ...styles.input, marginBottom: 16 }}
-          placeholder="Название..."
-        ></TextInput>
-      </View>
-      <View>
-        <TextInput
-          style={{ ...styles.input, marginBottom: 32 }}
-          placeholder="Местность..."
-        ></TextInput>
-      </View>
-      <TouchableOpacity style={styles.publishWrap} onPress={sendPhoto}>
-        <Text style={styles.publish}>Опубликовать</Text>
-      </TouchableOpacity>
-    </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -104,6 +149,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginHorizontal: 16,
+    justifyContent: "flex-end",
   },
   camera: {
     height: 240,
@@ -166,4 +212,20 @@ const styles = StyleSheet.create({
     color: "#BDBDBD",
     marginBottom: 32,
   },
+  deleteWrap: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  delete: {
+    backgroundColor: "#F6F6F6",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 20,
+    width: 70,
+    height: 40,
+  },
+  // Wrap: {
+  //   marginBottom: 100,
+  // },
 });

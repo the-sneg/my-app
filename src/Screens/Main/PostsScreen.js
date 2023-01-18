@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, View, Text, FlatList, Image, Button } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  FlatList,
+  Image,
+  TouchableOpacity,
+} from "react-native";
+
+import { Feather } from "@expo/vector-icons";
 
 export default function DefaultPostScreen({ route, navigation }) {
   const [posts, setPosts] = useState([]);
@@ -19,8 +28,21 @@ export default function DefaultPostScreen({ route, navigation }) {
         data={posts}
         keyExtractor={(item, indx) => indx.toString()}
         renderItem={({ item }) => (
-          <View>
+          <View style={styles.postWrap}>
             <Image source={{ uri: item.photo }} style={styles.postImg} />
+            <Text style={styles.postTitle}>Лес</Text>
+            <View style={styles.infoWrap}>
+              <TouchableOpacity style={styles.comments} onPress={""}>
+                <Text style={styles.commentsTitle}>0</Text>
+                <Feather name="message-circle" size={24} color="#BDBDBD" />
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.lokation} onPress={""}>
+                <Feather name="map-pin" size={24} color="#BDBDBD" />
+                <Text style={styles.lokationTitle}>
+                  Ivano-Frankivs'k Region, Ukraine
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
         )}
       />
@@ -31,17 +53,46 @@ export default function DefaultPostScreen({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    marginHorizontal: 16,
   },
-  img: {
-    width: 200,
-    height: 200,
-    borderColor: "#ff0000",
-    borderWidth: 1,
-    overflow: "visible",
-    marginTop: 20,
-  },
+
   postImg: {
     height: 240,
     borderRadius: 16,
+    marginBottom: 0,
+  },
+  postWrap: {
+    marginTop: 32,
+  },
+  postTitle: {
+    marginBottom: 12,
+    fontSize: 16,
+    color: "#212121",
+  },
+  comments: {
+    transform: [{ rotateY: "180deg" }],
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  commentsTitle: {
+    color: "#BDBDBD",
+    fontSize: 16,
+    marginRight: 6,
+  },
+  lokation: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+
+  lokationTitle: {
+    color: "#212121",
+    textDecorationLine: "underline",
+    fontSize: 16,
+    marginLeft: 4,
+  },
+  infoWrap: {
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
 });
