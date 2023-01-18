@@ -25,10 +25,11 @@ export default function CreatePostScreen({ navigation }) {
   const [hasPermission, setHasPermission] = useState(null);
   const [type, setType] = useState(CameraType.back);
 
-  const [location, setLocation] = useState(null);
-  const [errorMsg, setErrorMsg] = useState(null);
-
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
+
+  const [imageTitle, setImageTitle] = useState("");
+  const [locationTitle, setLocationTitle] = useState("");
+  const [location, setLocation] = useState(null);
 
   const keyboardHide = () => {
     setIsShowKeyboard(false);
@@ -80,10 +81,11 @@ export default function CreatePostScreen({ navigation }) {
       setErrorMsg("Permission to access location was denied");
       return;
     }
-
     let location = await Location.getCurrentPositionAsync({});
+    setLocation(location);
     console.log("location", location);
-    navigation.navigate("Posts", { photo });
+    console.log("photo", photo);
+    navigation.navigate("Posts", { photo, location, imageTitle,locationTitle });
   };
 
   return (
@@ -118,6 +120,8 @@ export default function CreatePostScreen({ navigation }) {
                 onFocus={() => setIsShowKeyboard(true)}
                 style={{ ...styles.input, marginBottom: 16 }}
                 placeholder="Название..."
+                onChangeText={setImageTitle}
+                value={imageTitle}
               ></TextInput>
             </View>
             <View>
@@ -125,6 +129,8 @@ export default function CreatePostScreen({ navigation }) {
                 onFocus={() => setIsShowKeyboard(true)}
                 style={{ ...styles.input, marginBottom: 32 }}
                 placeholder="Местность..."
+                onChangeText={setLocationTitle}
+                value={locationTitle}
               ></TextInput>
             </View>
             <TouchableOpacity

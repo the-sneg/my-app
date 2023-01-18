@@ -1,10 +1,12 @@
 import React from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import PostScreen from "./PostsScreen";
 import CreatePostScreen from "./CreatePostsScreen";
 import ProfileScreen from "./ProfileScreen";
+import CommentsScreen from "./CommentsScreen";
+import MapScreen from "./MapScreen";
 
 const MainTab = createBottomTabNavigator();
 import { Feather } from "@expo/vector-icons";
@@ -13,7 +15,7 @@ export default function Home() {
   return (
     <MainTab.Navigator
       screenOptions={{ tabBarShowLabel: false }}
-      backBehavior="order"
+      // backBehavior="order"
     >
       <MainTab.Screen
         options={{
@@ -54,6 +56,48 @@ export default function Home() {
         }}
         name="Profile"
         component={ProfileScreen}
+      />
+      <MainTab.Screen
+        options={{
+          headerLeft: () => (
+            <TouchableOpacity>
+              <Feather
+                name="arrow-left"
+                size={24}
+                color="black"
+                style={{ marginLeft: 16 }}
+              />
+            </TouchableOpacity>
+          ),
+          headerTitleAlign: "center",
+          headerTitle: "Комментарии",
+          tabBarButton: () => null,
+          tabBarVisible: false,
+          tabBarStyle: { display: "none" },
+        }}
+        name="Comments"
+        component={CommentsScreen}
+      />
+      <MainTab.Screen
+        options={{
+          headerLeft: () => (
+            <TouchableOpacity>
+              <Feather
+                name="arrow-left"
+                size={24}
+                color="black"
+                style={{ marginLeft: 16 }}
+              />
+            </TouchableOpacity>
+          ),
+          headerTitleAlign: "center",
+          headerTitle: "Карта",
+          tabBarButton: () => null,
+          tabBarVisible: false,
+          tabBarStyle: { display: "none" },
+        }}
+        name="Map"
+        component={MapScreen}
       />
     </MainTab.Navigator>
   );

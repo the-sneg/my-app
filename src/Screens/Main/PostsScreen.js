@@ -12,7 +12,8 @@ import { Feather } from "@expo/vector-icons";
 
 export default function DefaultPostScreen({ route, navigation }) {
   const [posts, setPosts] = useState([]);
-  console.log("params ", route.params);
+  console.log("paramss ", route.params);
+  console.log("params33 ", route);
 
   useEffect(() => {
     if (route.params) {
@@ -28,22 +29,36 @@ export default function DefaultPostScreen({ route, navigation }) {
         data={posts}
         keyExtractor={(item, indx) => indx.toString()}
         renderItem={({ item }) => (
-          <View style={styles.postWrap}>
-            <Image source={{ uri: item.photo }} style={styles.postImg} />
-            <Text style={styles.postTitle}>Лес</Text>
-            <View style={styles.infoWrap}>
-              <TouchableOpacity style={styles.comments} onPress={""}>
-                <Text style={styles.commentsTitle}>0</Text>
-                <Feather name="message-circle" size={24} color="#BDBDBD" />
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.lokation} onPress={""}>
-                <Feather name="map-pin" size={24} color="#BDBDBD" />
-                <Text style={styles.lokationTitle}>
-                  Ivano-Frankivs'k Region, Ukraine
-                </Text>
-              </TouchableOpacity>
+          console.log("itemmmm", { uri: item.photo }),
+          (
+            <View style={styles.postWrap}>
+              <Image source={{ uri: item.photo }} style={styles.postImg} />
+              <Text style={styles.postTitle}>{route.params.imageTitle}</Text>
+              <View style={styles.infoWrap}>
+                <TouchableOpacity
+                  style={styles.comments}
+                  onPress={() => navigation.navigate("Comments")}
+                >
+                  <Text style={styles.commentsTitle}>0</Text>
+                  <Feather name="message-circle" size={24} color="#BDBDBD" />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.lokation}
+                  onPress={() =>
+                    navigation.navigate("Map", {
+                      location: route.params.location.coords,
+                      title: route.params.locationTitle,
+                    })
+                  }
+                >
+                  <Feather name="map-pin" size={24} color="#BDBDBD" />
+                  <Text style={styles.lokationTitle}>
+                    {route.params.locationTitle}
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
+          )
         )}
       />
     </View>
@@ -59,7 +74,7 @@ const styles = StyleSheet.create({
   postImg: {
     height: 240,
     borderRadius: 16,
-    marginBottom: 0,
+    marginBottom: 8,
   },
   postWrap: {
     marginTop: 32,
