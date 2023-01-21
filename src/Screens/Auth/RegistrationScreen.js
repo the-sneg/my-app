@@ -14,8 +14,11 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 
+import { authSignUpUser } from "../../redux/auth/authOperations";
+import { useDispatch } from "react-redux";
+
 const initialState = {
-  name: "",
+  nickname: "",
   email: "",
   password: "",
 };
@@ -24,6 +27,8 @@ export default function RegistrationScreen({ navigation }) {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [state, setState] = useState(initialState);
   const [isSecureTextEntry, IsSecureTextEntry] = useState(true);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const hideKeyboard = Keyboard.addListener("keyboardDidHide", () => {
@@ -42,8 +47,8 @@ export default function RegistrationScreen({ navigation }) {
   const keyboardHideAndSubmit = () => {
     keyboardHide();
     setState(initialState);
-    navigation.navigate("Home");
-    console.log(state);
+    dispatch(authSignUpUser(state));
+    // navigation.navigate("Home");
   };
 
   return (
@@ -101,9 +106,9 @@ export default function RegistrationScreen({ navigation }) {
                   autoComplete="off"
                   placeholderTextColor="#BDBDBD"
                   onFocus={() => setIsShowKeyboard(true)}
-                  value={state.name}
+                  value={state.nickname}
                   onChangeText={(value) =>
-                    setState((prevState) => ({ ...prevState, name: value }))
+                    setState((prevState) => ({ ...prevState, nickname: value }))
                   }
                 />
               </View>

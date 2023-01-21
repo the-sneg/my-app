@@ -1,11 +1,17 @@
 import { View, Dimensions, Text } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
+
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { useRoute } from "./router";
+import { Provider } from "react-redux";
+import { store } from "./redux/store";
+import { auth } from "./firebase/config";
 
 export default function App() {
+  auth.onAuthStateChanged((user) => setUser(user));
+
   useEffect(() => {
     const onChange = () => {
       const width = Dimensions.get("window").width;
@@ -18,7 +24,11 @@ export default function App() {
     };
   }, []);
 
-  const routing = useRoute();
+  const [user, setUser] = useState(null);
+
+  const routing = useRoute(user);
+
+  console.log("first", user);
 
   const [fontsLoaded] = useFonts({
     "DMMono-Medium": require("../assets/fonts/DMMono-Medium.ttf"),
@@ -43,7 +53,9 @@ export default function App() {
       }}
       onLayout={onLayoutRootView}
     >
-      <NavigationContainer>{routing}</NavigationContainer>
+      <Provider store={store}>
+        <NavigationContainer>{routing}</NavigationContainer>
+      </Provider>
     </View>
   );
 }

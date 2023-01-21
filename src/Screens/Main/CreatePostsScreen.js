@@ -85,7 +85,12 @@ export default function CreatePostScreen({ navigation }) {
     setLocation(location);
     console.log("location", location);
     console.log("photo", photo);
-    navigation.navigate("Posts", { photo, location, imageTitle,locationTitle });
+    navigation.navigate("Posts", {
+      photo,
+      location,
+      imageTitle,
+      locationTitle,
+    });
   };
 
   return (
@@ -155,7 +160,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginHorizontal: 16,
-    justifyContent: "flex-end",
   },
   camera: {
     height: 240,

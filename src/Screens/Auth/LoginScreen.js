@@ -13,6 +13,9 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 
+import { authSignInUser } from "../../redux/auth/authOperations";
+import { useDispatch } from "react-redux";
+
 const initialState = {
   email: "",
   password: "",
@@ -22,6 +25,8 @@ export default function LoginScreen({ navigation }) {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [state, setState] = useState(initialState);
   const [isSecureTextEntry, IsSecureTextEntry] = useState(true);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const hideKeyboard = Keyboard.addListener("keyboardDidHide", () => {
@@ -40,8 +45,8 @@ export default function LoginScreen({ navigation }) {
   const keyboardHideAndSubmit = () => {
     keyboardHide();
     setState(initialState);
-    navigation.navigate("Home");
-    console.log(state);
+    dispatch(authSignInUser(state));
+    // navigation.navigate("Home");
   };
 
   return (
@@ -75,6 +80,7 @@ export default function LoginScreen({ navigation }) {
                 <TextInput
                   style={styles.input}
                   textAlign={"left"}
+                  keyboardType="email-address"
                   placeholder="Адрес электронной почты"
                   placeholderTextColor="#BDBDBD"
                   onFocus={() => setIsShowKeyboard(true)}

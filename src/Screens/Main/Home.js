@@ -10,8 +10,15 @@ import MapScreen from "./MapScreen";
 
 const MainTab = createBottomTabNavigator();
 import { Feather } from "@expo/vector-icons";
+import { authSignOutUser } from "../../redux/auth/authOperations";
+import { useDispatch } from "react-redux";
 
 export default function Home() {
+  const dispatch = useDispatch();
+
+  const logOut = () => {
+    dispatch(authSignOutUser());
+  };
   return (
     <MainTab.Navigator
       screenOptions={{ tabBarShowLabel: false }}
@@ -22,12 +29,14 @@ export default function Home() {
           headerTitleAlign: "center",
           headerTitle: "Публикации",
           headerRight: ({ focused, color, size }) => (
-            <Feather
-              name="log-out"
-              size={24}
-              color="#BDBDBD"
-              style={{ paddingRight: 16 }}
-            />
+            <TouchableOpacity onPress={logOut}>
+              <Feather
+                name="log-out"
+                size={24}
+                color="#BDBDBD"
+                style={{ paddingRight: 16 }}
+              />
+            </TouchableOpacity>
           ),
           tabBarIcon: ({ focused: boolean, color: red, size: number }) => (
             <Feather name="grid" size={24} color="rgba(33, 33, 33, 0.8)" />

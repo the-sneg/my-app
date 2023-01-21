@@ -23,13 +23,16 @@ export const useRoute = (isAuth) => {
           name="Registration"
           component={RegistrationScreen}
         />
-
-        <AuthStack.Screen
-          options={{ headerShown: false }}
-          name="Home"
-          component={Home}
-        />
       </AuthStack.Navigator>
     );
   }
+  return (
+    <AuthStack.Navigator>
+      <AuthStack.Screen
+        options={{ headerShown: false }}
+        name="Home"
+        component={Home}
+      />
+    </AuthStack.Navigator>
+  );
 };
