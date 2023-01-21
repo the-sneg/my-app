@@ -6,7 +6,7 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 import { auth } from "../../firebase/config";
-import { authSlice } from "./authReducer";
+import { authSlice, authLogout } from "./authReducer";
 
 export const authSignUpUser =
   ({ email, password, nickname }) =>
@@ -16,10 +16,15 @@ export const authSignUpUser =
       await updateProfile(auth.currentUser, {
         displayName: nickname,
       });
-
       const updatedUser = auth.currentUser;
+      dispatch(
+        authSlice.actions.updateUserProfile({
+          userId: updatedUser.uid,
+          nickname: updatedUser.displayName,
+        })
+      );
 
-      return updatedUser;
+      // return updatedUser;
     } catch (error) {
       console.log(error.message);
     }
@@ -49,7 +54,7 @@ export const authStateChangeUser = () => async (dispatch, getState) => {
     await onAuthStateChanged(auth, (user) => {
       if (user) {
         dispatch(
-          authSlice.actions.updateProfile({
+          authSlice.actions.updateUserProfile({
             userId: user.uid,
             nickname: user.displayName,
             email: user.email,
