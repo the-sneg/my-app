@@ -9,15 +9,26 @@ import {
 } from "react-native";
 
 import { Feather } from "@expo/vector-icons";
+import { getDocs, collection, doc, onSnapshot } from "firebase/firestore";
+import { db } from "../../firebase/config";
 
 export default function DefaultPostScreen({ route, navigation }) {
   const [posts, setPosts] = useState([]);
 
+  const getAllPosts = async () => {
+    const querySnapshot = await getDocs(collection(db, "posts"));
+    let newPosts = [];
+    querySnapshot.forEach((doc) => {
+      newPosts.push({ ...doc.data(), id: doc.id });
+    });
+    setPosts(newPosts);
+    console.log("newPosts", newPosts);
+    console.log("querySnapshot", querySnapshot);
+  };
+
   useEffect(() => {
-    if (route.params) {
-      setPosts((prevState) => [...prevState, route.params]);
-    }
-  }, [route.params]);
+    getAllPosts();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -25,11 +36,11 @@ export default function DefaultPostScreen({ route, navigation }) {
         data={posts}
         keyExtractor={(item, indx) => indx.toString()}
         renderItem={({ item }) => (
-          console.log("itemmmm", { uri: item.photo }),
+          { uri: item.image },
           (
             <View style={styles.postWrap}>
-              <Image source={{ uri: item.photo }} style={styles.postImg} />
-              <Text style={styles.postTitle}>{route.params.imageTitle}</Text>
+              <Image source={{ uri: item.image }} style={styles.postImg} />
+              <Text style={styles.postTitle}>{item.imageTitle}</Text>
               <View style={styles.infoWrap}>
                 <TouchableOpacity
                   style={styles.comments}
@@ -39,18 +50,16 @@ export default function DefaultPostScreen({ route, navigation }) {
                   <Feather name="message-circle" size={24} color="#BDBDBD" />
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={styles.lokation}
+                  style={styles.location}
                   onPress={() =>
                     navigation.navigate("Map", {
-                      location: route.params.location.coords,
-                      title: route.params.locationTitle,
+                      location: item.location,
+                      title: item.locationTitle,
                     })
                   }
                 >
                   <Feather name="map-pin" size={24} color="#BDBDBD" />
-                  <Text style={styles.lokationTitle}>
-                    {route.params.locationTitle}
-                  </Text>
+                  <Text style={styles.locationTitle}>{item.locationTitle}</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -90,12 +99,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginRight: 6,
   },
-  lokation: {
+  location: {
     flexDirection: "row",
     alignItems: "center",
   },
 
-  lokationTitle: {
+  locationTitle: {
     color: "#212121",
     textDecorationLine: "underline",
     fontSize: 16,
