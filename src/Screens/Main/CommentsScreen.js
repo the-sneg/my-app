@@ -1,11 +1,76 @@
-import { createStackNavigator } from "@react-navigation/stack";
 import React, { useState, useEffect } from "react";
-import { StyleSheet, View, Text, FlatList, Image, Button } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  SafeAreaView,
+  FlatList,
+} from "react-native";
 
-export default function CommentsScreen() {
+import { useSelector } from "react-redux";
+import { db } from "../../firebase/config";
+import {
+  getDocs,
+  collection,
+  doc,
+  onSnapshot,
+  getDoc,
+  addDoc,
+} from "firebase/firestore";
+
+export default function CommentsScreen({ route }) {
+  const { postId } = route.params;
+  const [comment, setComment] = useState("");
+  const [allComments, setAllComments] = useState([]);
+  const { nickname } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    getAllPosts();
+  }, []);
+
+  const createPost = async () => {
+    const querySnapshot = await addDoc(
+      collection(db, "posts", `${postId}`, "comments"),
+      {
+        comment,
+        nickname,
+      }
+    );
+  };
+
+  const getAllPosts = async () => {
+    const querySnapshot = await getDocs(
+      collection(db, "posts", `${postId}`, "comments")
+    );
+    let comments = [];
+    querySnapshot.forEach((doc) => {
+      comments.push({ ...doc.data(), id: doc.id });
+    });
+    setAllComments(comments);
+    console.log("comments", comments);
+  };
   return (
-    <View>
-      <Text>CommentsScreen</Text>
+    <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
+        <FlatList
+          data={allComments}
+          renderItem={({ item }) => (
+            <View>
+              <Text>{item.nickname}</Text>
+              <Text>{item.comment}</Text>
+            </View>
+          )}
+          keyExtractor={(item) => item.id}
+        />
+      </SafeAreaView>
+      <View>
+        <TextInput style={styles.input} onChangeText={setComment}></TextInput>
+      </View>
+      <TouchableOpacity style={styles.publishWrap} onPress={createPost}>
+        <Text style={styles.publish}>Опубликовать</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -13,17 +78,25 @@ export default function CommentsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    // justifyContent: "flex-end",
   },
-  img: {
-    width: 200,
-    height: 200,
-    borderColor: "#ff0000",
-    borderWidth: 1,
-    overflow: "visible",
-    marginTop: 20,
+  input: {
+    borderBottomWidth: 1,
+    height: 50,
+    fontSize: 16,
+    borderColor: "#E8E8E8",
+    marginBottom: 20,
   },
-  postImg: {
-    height: 240,
-    borderRadius: 16,
+  publish: {
+    color: "#BDBDBD",
+    fontSize: 16,
+  },
+  publishWrap: {
+    height: 51,
+    backgroundColor: "#F6F6F6",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 100,
+    marginBottom: 50,
   },
 });

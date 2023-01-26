@@ -66,6 +66,16 @@ export default function CreatePostScreen({ navigation }) {
     })();
   }, []);
 
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
+        return;
+      }
+    })();
+  }, []);
+
   if (hasPermission === null) {
     return (
       <View>
@@ -84,25 +94,14 @@ export default function CreatePostScreen({ navigation }) {
 
   const takePhoto = async () => {
     const photo = await camera.takePictureAsync();
+    let location = await Location.getCurrentPositionAsync({});
+    setLocation(location);
     setPhoto(photo.uri);
   };
 
   const sendPhoto = async () => {
     uploadPostToServer();
-    let { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== "granted") {
-      setErrorMsg("Permission to access location was denied");
-      return;
-    }
-    let locationRes = await Location.getCurrentPositionAsync({});
-    setLocation(locationRes);
-
-    navigation.navigate("Posts", {
-      photo,
-      location,
-      imageTitle,
-      locationTitle,
-    });
+    navigation.navigate("Posts");
   };
 
   const uploadPostToServer = async () => {

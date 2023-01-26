@@ -14,6 +14,7 @@ import { db } from "../../firebase/config";
 
 export default function DefaultPostScreen({ route, navigation }) {
   const [posts, setPosts] = useState([]);
+  console.log("posts", posts);
 
   const getAllPosts = async () => {
     const querySnapshot = await getDocs(collection(db, "posts"));
@@ -22,8 +23,6 @@ export default function DefaultPostScreen({ route, navigation }) {
       newPosts.push({ ...doc.data(), id: doc.id });
     });
     setPosts(newPosts);
-    console.log("newPosts", newPosts);
-    console.log("querySnapshot", querySnapshot);
   };
 
   useEffect(() => {
@@ -44,9 +43,11 @@ export default function DefaultPostScreen({ route, navigation }) {
               <View style={styles.infoWrap}>
                 <TouchableOpacity
                   style={styles.comments}
-                  onPress={() => navigation.navigate("Comments")}
+                  onPress={() =>
+                    navigation.navigate("Comments", { postId: item.id })
+                  }
                 >
-                  <Text style={styles.commentsTitle}>0</Text>
+                  <Text style={styles.commentsTitle}>{item.comments}</Text>
                   <Feather name="message-circle" size={24} color="#BDBDBD" />
                 </TouchableOpacity>
                 <TouchableOpacity
