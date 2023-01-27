@@ -24,7 +24,7 @@ export default function CommentsScreen({ route }) {
   const { postId } = route.params;
   const [comment, setComment] = useState("");
   const [allComments, setAllComments] = useState([]);
-  const { nickname } = useSelector((state) => state.auth);
+  const { nickname, userId } = useSelector((state) => state.auth);
 
   useEffect(() => {
     getAllPosts();
@@ -36,6 +36,7 @@ export default function CommentsScreen({ route }) {
       {
         comment,
         nickname,
+        userId,
       }
     );
   };
@@ -57,9 +58,16 @@ export default function CommentsScreen({ route }) {
         <FlatList
           data={allComments}
           renderItem={({ item }) => (
-            <View>
-              <Text>{item.nickname}</Text>
-              <Text>{item.comment}</Text>
+            <View
+              style={{
+                flexDirection: item.userId === userId ? "row" : "row-reverse",
+              }}
+              onStartShouldSetResponder={() => true}
+            >
+              <View>
+                <Text>{item.nickname}</Text>
+                <Text>{item.comment}</Text>
+              </View>
             </View>
           )}
           keyExtractor={(item) => item.id}

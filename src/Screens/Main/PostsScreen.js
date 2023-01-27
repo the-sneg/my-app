@@ -47,7 +47,7 @@ export default function DefaultPostScreen({ route, navigation }) {
                     navigation.navigate("Comments", { postId: item.id })
                   }
                 >
-                  <Text style={styles.commentsTitle}>{item.comments}</Text>
+                  <Text style={styles.commentsTitle}>0</Text>
                   <Feather name="message-circle" size={24} color="#BDBDBD" />
                 </TouchableOpacity>
                 <TouchableOpacity
