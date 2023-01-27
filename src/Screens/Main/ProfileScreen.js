@@ -52,7 +52,7 @@ export default function ProfileScreen({ navigation }) {
                     navigation.navigate("Comments", { postId: item.id })
                   }
                 >
-                  <Text style={styles.commentsTitle}>0</Text>
+                  <Text style={styles.commentsTitle}>{item.comments}</Text>
                   <Feather name="message-circle" size={24} color="#BDBDBD" />
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -104,6 +104,7 @@ const styles = StyleSheet.create({
     color: "#BDBDBD",
     fontSize: 16,
     marginRight: 6,
+    transform: [{ rotateY: "180deg" }],
   },
   location: {
     flexDirection: "row",

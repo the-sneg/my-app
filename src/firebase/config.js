@@ -21,7 +21,6 @@ if (!firebase.apps.length) {
 }
 
 const app = initializeApp(firebaseConfig);
-export const test = firebase.initializeApp(firebaseConfig);
 
 export { app, firebase };
 export const auth = getAuth(app);
