@@ -114,6 +114,7 @@ export default function CreatePostScreen({ navigation }) {
       locationTitle,
       userId,
       nickname,
+      comments: 0,
     });
   };
 

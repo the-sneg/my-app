@@ -18,6 +18,8 @@ import {
   onSnapshot,
   getDoc,
   addDoc,
+  updateDoc,
+  increment,
 } from "firebase/firestore";
 
 export default function CommentsScreen({ route }) {
@@ -39,6 +41,9 @@ export default function CommentsScreen({ route }) {
         userId,
       }
     );
+    await updateDoc(doc(db, "posts", `${postId}`), {
+      comments: increment(1),
+    });
   };
 
   const getAllPosts = async () => {
