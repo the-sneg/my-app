@@ -4,8 +4,14 @@ import * as ImagePicker from "expo-image-picker";
 import { authSignUpUser, updateAvatar } from "../../redux/auth/authOperations";
 import { useDispatch } from "react-redux";
 import { storage } from "../../firebase/config";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
 import { authSlice } from "../../redux/auth/authReducer";
+import uuid from "react-native-uuid";
 
 import {
   StyleSheet,
@@ -33,8 +39,6 @@ export default function RegistrationScreen({ navigation }) {
   const [state, setState] = useState(initialState);
   const [isSecureTextEntry, IsSecureTextEntry] = useState(true);
   const [avatar, setAvatar] = useState(null);
-  console.log("avatar", avatar);
-  console.log("state", state);
 
   const dispatch = useDispatch();
 
@@ -54,7 +58,7 @@ export default function RegistrationScreen({ navigation }) {
   };
   const keyboardHideAndSubmit = async () => {
     keyboardHide();
-    await uploadAvararToServer();
+    uploadAvararToServer();
     setState(initialState);
     dispatch(authSignUpUser(state));
   };
@@ -73,17 +77,21 @@ export default function RegistrationScreen({ navigation }) {
     }
   };
 
-  const uploadAvararToServer = async (avatarId) => {
-    try {
-      const response = await fetch(avatar);
-      const file = await response.blob();
-      const storageRef = ref(storage, `avatars/${avatarId}`);
-      await uploadBytes(storageRef, file);
-      const path = await getDownloadURL(ref(storage, `avatars/${avatarId}`));
-      setAvatar(path);
-    } catch (error) {
-      console.log(error);
-    }
+  const uploadAvararToServer = async () => {
+    const image = await uploadPhotoToServer();
+  };
+
+  const uploadPhotoToServer = async () => {
+    const response = await fetch(avatar);
+    const file = await response.blob();
+    const uid = uuid.v4();
+    const storage = getStorage();
+    const storageRef = await ref(storage, `avatars/${uid}`);
+    const uploadTask = await uploadBytesResumable(storageRef, file);
+
+    const processedPhoto = await getDownloadURL(storageRef);
+
+    return processedPhoto;
   };
 
   return (

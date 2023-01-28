@@ -14,7 +14,7 @@ import { db } from "../../firebase/config";
 import { Feather } from "@expo/vector-icons";
 
 export default function ProfileScreen({ navigation }) {
-  const { userId } = useSelector((state) => state.auth);
+  const { userId, avatar } = useSelector((state) => state.auth);
 
   const [userPosts, setUserPosts] = useState([]);
   console.log("userPostss", userPosts);
@@ -36,6 +36,12 @@ export default function ProfileScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
+      <View style={{ alignItems: "center", borderRadius: 20 }}>
+        <Image
+          source={{ uri: avatar }}
+          style={{ height: 120, width: 120, borderRadius: 20 }}
+        />
+      </View>
       <FlatList
         data={userPosts}
         keyExtractor={(item, indx) => indx.toString()}

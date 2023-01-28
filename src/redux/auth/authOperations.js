@@ -9,20 +9,22 @@ import { auth } from "../../firebase/config";
 import { authSlice, authLogout } from "./authReducer";
 
 export const authSignUpUser =
-  ({ email, password, nickname }) =>
+  ({ email, password, nickname, avatar }) =>
   async (dispatch, getState) => {
     try {
       await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(auth.currentUser, {
         displayName: nickname,
+        photoURL: avatar,
       });
       const updatedUser = auth.currentUser;
       dispatch(
         authSlice.actions.updateUserProfile({
           userId: updatedUser.uid,
           nickname: updatedUser.displayName,
-          email: user.email,
-          avatar: user.photoURL,
+          email: updatedUser.email,
+          // avatar: updatedUser.avatar,
+          avatar: updatedUser.photoURL,
         })
       );
 

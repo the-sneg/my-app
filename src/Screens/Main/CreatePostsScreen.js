@@ -43,7 +43,7 @@ export default function CreatePostScreen({ navigation }) {
   const [locationTitle, setLocationTitle] = useState("");
   const [location, setLocation] = useState(null);
 
-  const { userId, nickname } = useSelector((state) => state.auth);
+  const { userId, nickname, avatar } = useSelector((state) => state.auth);
   console.log("nickname", nickname);
 
   const keyboardHide = () => {
@@ -119,6 +119,7 @@ export default function CreatePostScreen({ navigation }) {
       userId,
       nickname,
       comments: 0,
+      avatar,
     });
   };
 
