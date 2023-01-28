@@ -28,6 +28,7 @@ import {
 } from "firebase/storage";
 import { collection, addDoc } from "firebase/firestore";
 import uuid from "react-native-uuid";
+import { useIsFocused } from "@react-navigation/native";
 
 export default function CreatePostScreen({ navigation }) {
   const [camera, setCamera] = useState(null);
@@ -43,6 +44,7 @@ export default function CreatePostScreen({ navigation }) {
   const [location, setLocation] = useState(null);
 
   const { userId, nickname } = useSelector((state) => state.auth);
+  console.log("nickname", nickname);
 
   const keyboardHide = () => {
     setIsShowKeyboard(false);
@@ -59,12 +61,14 @@ export default function CreatePostScreen({ navigation }) {
     };
   }, []);
 
+  const isFocused = useIsFocused();
+
   useEffect(() => {
     (async () => {
       const { status } = await Camera.requestCameraPermissionsAsync();
       setHasPermission(status === "granted");
     })();
-  }, []);
+  }, [camera, isFocused]);
 
   useEffect(() => {
     (async () => {

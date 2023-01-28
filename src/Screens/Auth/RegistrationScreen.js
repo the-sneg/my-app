@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from "react";
 import Svg, { Circle, Path } from "react-native-svg";
+import * as ImagePicker from "expo-image-picker";
+import { authSignUpUser, updateAvatar } from "../../redux/auth/authOperations";
+import { useDispatch } from "react-redux";
+import { storage } from "../../firebase/config";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { authSlice } from "../../redux/auth/authReducer";
 
 import {
   StyleSheet,
@@ -12,21 +18,23 @@ import {
   KeyboardAvoidingView,
   Keyboard,
   TouchableWithoutFeedback,
+  Image,
 } from "react-native";
-
-import { authSignUpUser } from "../../redux/auth/authOperations";
-import { useDispatch } from "react-redux";
 
 const initialState = {
   nickname: "",
   email: "",
   password: "",
+  avatar: "",
 };
 
 export default function RegistrationScreen({ navigation }) {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [state, setState] = useState(initialState);
   const [isSecureTextEntry, IsSecureTextEntry] = useState(true);
+  const [avatar, setAvatar] = useState(null);
+  console.log("avatar", avatar);
+  console.log("state", state);
 
   const dispatch = useDispatch();
 
@@ -44,11 +52,38 @@ export default function RegistrationScreen({ navigation }) {
     setIsShowKeyboard(false);
     Keyboard.dismiss();
   };
-  const keyboardHideAndSubmit = () => {
+  const keyboardHideAndSubmit = async () => {
     keyboardHide();
+    await uploadAvararToServer();
     setState(initialState);
     dispatch(authSignUpUser(state));
-    // navigation.navigate("Home");
+  };
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setAvatar(result.assets[0].uri);
+      setState((prevState) => ({ ...prevState, avatar: result.assets[0].uri }));
+    }
+  };
+
+  const uploadAvararToServer = async (avatarId) => {
+    try {
+      const response = await fetch(avatar);
+      const file = await response.blob();
+      const storageRef = ref(storage, `avatars/${avatarId}`);
+      await uploadBytes(storageRef, file);
+      const path = await getDownloadURL(ref(storage, `avatars/${avatarId}`));
+      setAvatar(path);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -63,7 +98,11 @@ export default function RegistrationScreen({ navigation }) {
           >
             <View style={styles.avatarWrap}>
               <View style={styles.avatarBox}>
-                <TouchableOpacity style={styles.addBtnBox}>
+                <Image
+                  style={{ height: "100%", width: "100%", borderRadius: 16 }}
+                  source={{ uri: avatar }}
+                ></Image>
+                <TouchableOpacity style={styles.addBtnBox} onPress={pickImage}>
                   <Svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="25"
@@ -243,6 +282,8 @@ const styles = StyleSheet.create({
     height: 120,
     width: 120,
     backgroundColor: "#F6F6F6",
+    // borderBottomColor: "red",
+    // borderWidth: 1,
     borderRadius: 16,
   },
   avatarWrap: {

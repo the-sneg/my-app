@@ -13,7 +13,7 @@ import { Feather } from "@expo/vector-icons";
 import { authSignOutUser } from "../../redux/auth/authOperations";
 import { useDispatch } from "react-redux";
 
-export default function Home() {
+export default function Home({ navigation }) {
   const dispatch = useDispatch();
 
   const logOut = () => {
@@ -59,6 +59,18 @@ export default function Home() {
       />
       <MainTab.Screen
         options={{
+          headerTitleAlign: "center",
+          headerTitle: "Профиль",
+          headerRight: ({ focused, color, size }) => (
+            <TouchableOpacity onPress={logOut}>
+              <Feather
+                name="log-out"
+                size={24}
+                color="#BDBDBD"
+                style={{ paddingRight: 16 }}
+              />
+            </TouchableOpacity>
+          ),
           tabBarIcon: ({ focused: boolean, color: red, size: number }) => (
             <Feather name="user" size={24} color="rgba(33, 33, 33, 0.8)" />
           ),
@@ -69,7 +81,7 @@ export default function Home() {
       <MainTab.Screen
         options={{
           headerLeft: () => (
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate("Posts")}>
               <Feather
                 name="arrow-left"
                 size={24}

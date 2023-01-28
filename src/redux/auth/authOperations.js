@@ -21,6 +21,8 @@ export const authSignUpUser =
         authSlice.actions.updateUserProfile({
           userId: updatedUser.uid,
           nickname: updatedUser.displayName,
+          email: user.email,
+          avatar: user.photoURL,
         })
       );
 
@@ -65,7 +67,7 @@ export const authStateChangeUser = () => async (dispatch, getState) => {
       }
     });
   } catch (error) {
-    console.log(error.message);
+    console.log("error change", error.message);
   }
 };
 
@@ -81,6 +83,6 @@ export const updateAvatar = (newAvatar) => async (dispatch, getState) => {
       })
     );
   } catch (error) {
-    console.log(error.message);
+    console.log("error avatar", error.message);
   }
 };

@@ -7,14 +7,13 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-
+import { useIsFocused } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
 import { getDocs, collection, doc, onSnapshot } from "firebase/firestore";
 import { db } from "../../firebase/config";
 
 export default function DefaultPostScreen({ route, navigation }) {
   const [posts, setPosts] = useState([]);
-  console.log(posts);
 
   const getAllPosts = async () => {
     const querySnapshot = await getDocs(collection(db, "posts"));
@@ -25,9 +24,11 @@ export default function DefaultPostScreen({ route, navigation }) {
     setPosts(newPosts);
   };
 
+  const isFocused = useIsFocused();
+
   useEffect(() => {
     getAllPosts();
-  }, []);
+  }, [posts, isFocused]);
 
   return (
     <View style={styles.container}>
@@ -43,9 +44,12 @@ export default function DefaultPostScreen({ route, navigation }) {
               <View style={styles.infoWrap}>
                 <TouchableOpacity
                   style={styles.comments}
-                  onPress={() =>
-                    navigation.navigate("Comments", { postId: item.id })
-                  }
+                  onPress={async () => {
+                    navigation.navigate("Comments", {
+                      image: item.image,
+                      postId: item.id,
+                    });
+                  }}
                 >
                   <Text style={styles.commentsTitle}>{item.comments}</Text>
                   <Feather name="message-circle" size={24} color="#BDBDBD" />
