@@ -47,6 +47,7 @@ export default function Home({ navigation }) {
       />
       <MainTab.Screen
         options={{
+          unmountOnBlur: "true",
           tabBarStyle: { display: "none" },
           headerTitleAlign: "center",
           headerTitle: "Создать публикацию",

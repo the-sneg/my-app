@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
+import * as ImagePicker from "expo-image-picker";
 
 import {
   StyleSheet,
@@ -103,6 +104,21 @@ export default function CreatePostScreen({ navigation }) {
     setPhoto(photo.uri);
   };
 
+  const uploadImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation(location);
+      setPhoto(result.assets[0].uri);
+    }
+  };
+
   const sendPhoto = async () => {
     uploadPostToServer();
     navigation.navigate("Posts");
@@ -161,7 +177,10 @@ export default function CreatePostScreen({ navigation }) {
                 </TouchableOpacity>
               </Camera>
             </View>
-            <TouchableOpacity style={{ width: 116 }} onPress={""}>
+            <TouchableOpacity
+              style={{ width: 116 }}
+              onPress={() => uploadImage()}
+            >
               <Text style={styles.uploadPhoto}>Загрузите фото</Text>
             </TouchableOpacity>
             <View>

@@ -7,8 +7,9 @@ import {
   TouchableOpacity,
   Image,
   ImageBackground,
+  ActivityIndicator,
 } from "react-native";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import Svg, { Circle, Path } from "react-native-svg";
 import * as ImagePicker from "expo-image-picker";
 
@@ -23,17 +24,19 @@ import {
   arrayUnion,
   doc,
 } from "firebase/firestore";
-import { db } from "../../firebase/config";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { db, storage } from "../../firebase/config";
 import { Feather, AntDesign, Ionicons } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/native";
+import { updateAvatar, authSignOutUser } from "../../redux/auth/authOperations";
 
 export default function ProfileScreen({ navigation }) {
   const { userId, avatar, nickname } = useSelector((state) => state.auth);
-  const [avatarChange, setAvatarChange] = useState(null);
-
+  const [loading, setLoading] = useState(false);
   const [userPosts, setUserPosts] = useState([]);
-  console.log("userPostss", userPosts);
+  // console.log("userPostss", userPosts);
 
+  const dispatch = useDispatch();
   const isFocused = useIsFocused();
 
   useEffect(() => {
@@ -64,20 +67,39 @@ export default function ProfileScreen({ navigation }) {
       });
     }
   };
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
 
-    if (!result.canceled) {
-      setAvatarChange(result.assets[0].uri);
-      setAvatarChange((prevState) => ({
-        ...prevState,
-        avatar: result.assets[0].uri,
-      }));
+  const uploadPhotoToServer = async (avatar) => {
+    try {
+      const response = await fetch(avatar);
+      const file = await response.blob();
+      const storageRef = ref(storage, `avatars/${userId}`);
+      await uploadBytes(storageRef, file);
+      const path = await getDownloadURL(ref(storage, `avatars/${userId}`));
+
+      return path;
+    } catch (error) {
+      console.log("uploadPhotoToServer", error);
+    }
+  };
+
+  const pickImage = async () => {
+    try {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+
+      if (!result.canceled) {
+        setLoading(true);
+        const avatar = await uploadPhotoToServer(result.assets[0].uri);
+
+        dispatch(updateAvatar(avatar));
+        setLoading(false);
+      }
+    } catch (error) {
+      console.log("pickImage", error);
     }
   };
 
@@ -117,6 +139,7 @@ export default function ProfileScreen({ navigation }) {
               </Svg>
             </TouchableOpacity>
           </View>
+          {loading && <ActivityIndicator style={styles.loader} />}
         </View>
         <View
           style={{
@@ -145,7 +168,7 @@ export default function ProfileScreen({ navigation }) {
                 <Text style={styles.postTitle}>{item.imageTitle}</Text>
                 <View style={styles.infoWrap}>
                   <TouchableOpacity
-                    style={styles.comments}
+                    style={styles.commentsWrap}
                     onPress={() =>
                       navigation.navigate("Comments", {
                         postId: item.id,
@@ -153,7 +176,7 @@ export default function ProfileScreen({ navigation }) {
                       })
                     }
                   >
-                    <Text style={styles.commentsTitle}>{item.comments}</Text>
+                    <Text style={styles.comments}>{item.comments}</Text>
 
                     {item.comments > 0 ? (
                       <Ionicons
@@ -171,7 +194,7 @@ export default function ProfileScreen({ navigation }) {
                   </TouchableOpacity>
 
                   <TouchableOpacity
-                    style={styles.likesInfo}
+                    style={styles.likesWrap}
                     onPress={() => addLike(item.id)}
                   >
                     {item?.likes?.includes(`${userId}`) ? (
@@ -182,13 +205,11 @@ export default function ProfileScreen({ navigation }) {
                       <AntDesign name="like2" size={24} color="#BDBDBD" />
                     )}
 
-                    <Text style={styles.likesNumber}>
-                      {item.likes.length || 0}
-                    </Text>
+                    <Text style={styles.likes}>{item.likes.length || 0}</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
-                    style={styles.location}
+                    style={styles.locationWrap}
                     onPress={() =>
                       navigation.navigate("Map", {
                         location: item.location,
@@ -243,6 +264,10 @@ const styles = StyleSheet.create({
     color: "#212121",
     marginBottom: 15,
   },
+  loader: {
+    position: "absolute",
+    top: 50,
+  },
   postImg: {
     height: 240,
     borderRadius: 16,
@@ -257,18 +282,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#212121",
   },
-  comments: {
+  commentsWrap: {
     transform: [{ rotateY: "180deg" }],
     flexDirection: "row",
     alignItems: "center",
   },
-  commentsTitle: {
+  comments: {
     color: "#BDBDBD",
     fontSize: 16,
     marginRight: 6,
     transform: [{ rotateY: "180deg" }],
   },
-  location: {
+  locationWrap: {
     flexDirection: "row",
     alignItems: "center",
   },
@@ -285,13 +310,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
   },
-  likesInfo: {
+  likesWrap: {
     flexDirection: "row",
     alignItems: "center",
     marginRight: "auto",
     marginLeft: 24,
   },
-  likesNumber: {
+  likes: {
     fontSize: 16,
     lineHeight: 19,
     color: "#BDBDBD",
