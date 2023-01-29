@@ -8,12 +8,23 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
-import { Feather } from "@expo/vector-icons";
-import { getDocs, collection, doc, onSnapshot } from "firebase/firestore";
+import { AntDesign, Ionicons, Feather } from "@expo/vector-icons";
+import {
+  getDocs,
+  getDoc,
+  doc,
+  updateDoc,
+  arrayRemove,
+  arrayUnion,
+  collection,
+  onSnapshot,
+} from "firebase/firestore";
 import { db } from "../../firebase/config";
+import { useSelector } from "react-redux";
 
 export default function DefaultPostScreen({ route, navigation }) {
   const [posts, setPosts] = useState([]);
+  const { email, login, avatar, userId } = useSelector((state) => state.auth);
 
   const getAllPosts = async () => {
     const querySnapshot = await getDocs(collection(db, "posts"));
@@ -29,6 +40,20 @@ export default function DefaultPostScreen({ route, navigation }) {
   useEffect(() => {
     getAllPosts();
   }, [posts, isFocused]);
+
+  const addLike = async (id) => {
+    const result = await getDoc(doc(db, "posts", `${id}`));
+    console.log("result", result.data());
+    if (result.data().likes.includes(`${userId}`)) {
+      await updateDoc(doc(db, "posts", `${id}`), {
+        likes: arrayRemove(`${userId}`),
+      });
+    } else {
+      await updateDoc(doc(db, "posts", `${id}`), {
+        likes: arrayUnion(`${userId}`),
+      });
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -52,7 +77,31 @@ export default function DefaultPostScreen({ route, navigation }) {
                   }}
                 >
                   <Text style={styles.commentsTitle}>{item.comments}</Text>
-                  <Feather name="message-circle" size={24} color="#BDBDBD" />
+                  {item.comments > 0 ? (
+                    <Ionicons
+                      name="md-chatbubble-sharp"
+                      size={24}
+                      color="#FF6C00"
+                    />
+                  ) : (
+                    <Feather name="message-circle" size={24} color="#BDBDBD" />
+                  )}
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.likesInfo}
+                  onPress={() => addLike(item.id)}
+                >
+                  {item?.likes?.includes(`${userId}`) ? (
+                    <AntDesign name="like1" size={24} color="#FF6C00" />
+                  ) : item.likes.length > 0 ? (
+                    <AntDesign name="like2" size={24} color="#FF6C00" />
+                  ) : (
+                    <AntDesign name="like2" size={24} color="#BDBDBD" />
+                  )}
+
+                  <Text style={styles.likesNumber}>
+                    {item.likes.length || 0}
+                  </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.location}
@@ -79,6 +128,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginHorizontal: 16,
+    paddingTop: 32,
   },
 
   postImg: {
@@ -87,7 +137,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   postWrap: {
-    marginTop: 32,
+    marginBottom: 32,
   },
   postTitle: {
     marginBottom: 12,
@@ -115,10 +165,23 @@ const styles = StyleSheet.create({
     textDecorationLine: "underline",
     fontSize: 16,
     marginLeft: 4,
+    maxWidth: 150,
   },
   infoWrap: {
     alignItems: "center",
     flexDirection: "row",
     justifyContent: "space-between",
+  },
+  likesInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginRight: "auto",
+    marginLeft: 24,
+  },
+  likesNumber: {
+    fontSize: 16,
+    lineHeight: 19,
+    color: "#BDBDBD",
+    marginLeft: 6,
   },
 });

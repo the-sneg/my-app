@@ -112,14 +112,15 @@ export default function CreatePostScreen({ navigation }) {
     const image = await uploadPhotoToServer();
 
     const createPost = await addDoc(collection(db, "posts"), {
+      userId,
+      nickname,
+      avatar,
       image,
       imageTitle,
       location,
       locationTitle,
-      userId,
-      nickname,
       comments: 0,
-      avatar,
+      likes: [],
     });
   };
 
@@ -177,6 +178,7 @@ export default function CreatePostScreen({ navigation }) {
                 onFocus={() => setIsShowKeyboard(true)}
                 style={{ ...styles.input, marginBottom: 32 }}
                 placeholder="Местность..."
+                maxLength={10}
                 onChangeText={setLocationTitle}
                 value={locationTitle}
               ></TextInput>

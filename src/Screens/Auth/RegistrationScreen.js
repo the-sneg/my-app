@@ -39,6 +39,8 @@ export default function RegistrationScreen({ navigation }) {
   const [state, setState] = useState(initialState);
   const [isSecureTextEntry, IsSecureTextEntry] = useState(true);
   const [avatar, setAvatar] = useState(null);
+  console.log("state", state);
+  console.log("avatar", avatar);
 
   const dispatch = useDispatch();
 
@@ -227,6 +229,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+
   image: {
     flex: 1,
     resizeMode: "cover",

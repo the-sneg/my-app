@@ -23,6 +23,7 @@ import {
   increment,
 } from "firebase/firestore";
 import { useIsFocused } from "@react-navigation/native";
+import { Feather } from "@expo/vector-icons";
 
 export default function CommentsScreen({ route }) {
   const { postId, image } = route.params;
@@ -30,6 +31,8 @@ export default function CommentsScreen({ route }) {
   const [allComments, setAllComments] = useState([]);
   const { nickname, userId, avatar } = useSelector((state) => state.auth);
   const isFocused = useIsFocused();
+
+  console.log("allComments", image);
 
   useEffect(() => {
     getAllPosts();
@@ -109,15 +112,24 @@ export default function CommentsScreen({ route }) {
             keyExtractor={(item) => item.id}
           />
         </SafeAreaView>
-        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+        <View style={styles.submitCommentWrap}>
           <View>
             <TextInput
-              style={styles.input}
+              style={{
+                ...styles.input,
+                
+              }}
+              placeholder={"Комментировать..."}
               onChangeText={setComment}
             ></TextInput>
           </View>
           <TouchableOpacity style={styles.publishWrap} onPress={createPost}>
-            <Text style={styles.publish}>Опубликовать</Text>
+            <Feather
+              name="arrow-up"
+              size={24}
+              color="#fff"
+              style={styles.publish}
+            />
           </TouchableOpacity>
         </View>
       </View>
@@ -137,22 +149,28 @@ const styles = StyleSheet.create({
   input: {
     borderBottomWidth: 1,
     height: 30,
-    width: 200,
     fontSize: 16,
     borderColor: "#E8E8E8",
     marginBottom: 20,
   },
-  publish: {
-    color: "#BDBDBD",
-    fontSize: 16,
+  submitCommentWrap: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    height: 50,
+    borderRadius: 100,
+    backgroundColor: "#F6F6F6",
+    paddingTop: 10,
   },
   publishWrap: {
-    height: 51,
-    backgroundColor: "#F6F6F6",
+    position: "absolute",
+    right: 8,
+    top: 8,
+    height: 34,
+    width: 34,
+    borderRadius: 50,
+    backgroundColor: "#FF6C00",
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 100,
-    marginBottom: 10,
   },
 
   postImg: {
