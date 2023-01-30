@@ -99,8 +99,8 @@ export default function CreatePostScreen({ navigation }) {
 
   const takePhoto = async () => {
     const photo = await camera.takePictureAsync();
-    let location = await Location.getCurrentPositionAsync({});
-    setLocation(location);
+    let locationRef = await Location.getCurrentPositionAsync({});
+    setLocation(locationRef);
     setPhoto(photo.uri);
   };
 
@@ -113,8 +113,8 @@ export default function CreatePostScreen({ navigation }) {
     });
 
     if (!result.canceled) {
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
+      let locationRef = await Location.getCurrentPositionAsync({});
+      setLocation(locationRef);
       setPhoto(result.assets[0].uri);
     }
   };

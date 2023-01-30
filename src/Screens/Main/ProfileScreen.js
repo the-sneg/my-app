@@ -29,8 +29,9 @@ import { db, storage } from "../../firebase/config";
 import { Feather, AntDesign, Ionicons } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/native";
 import { updateAvatar, authSignOutUser } from "../../redux/auth/authOperations";
+import { pathSlice } from "../../redux/path/pathReducer";
 
-export default function ProfileScreen({ navigation }) {
+export default function ProfileScreen({ navigation, route }) {
   const { userId, avatar, nickname } = useSelector((state) => state.auth);
   const [loading, setLoading] = useState(false);
   const [userPosts, setUserPosts] = useState([]);
@@ -125,7 +126,7 @@ export default function ProfileScreen({ navigation }) {
         style={styles.background}
         source={require("../../../assets/img/background.png")}
       >
-        <View style={styles.avatarWrap}>
+        <View style={styles.avatarWrap} pointerEvents="box-none">
           <View style={styles.avatarBox}>
             <Image
               style={{ height: "100%", width: "100%", borderRadius: 16 }}
@@ -175,7 +176,10 @@ export default function ProfileScreen({ navigation }) {
               name="log-out"
               size={24}
               color="#BDBDBD"
-              style={{ marginLeft: 300 }}
+              style={{
+                marginLeft: 300,
+                padding: 10,
+              }}
             />
           </TouchableOpacity>
 
@@ -198,12 +202,13 @@ export default function ProfileScreen({ navigation }) {
                 <View style={styles.infoWrap}>
                   <TouchableOpacity
                     style={styles.commentsWrap}
-                    onPress={() =>
+                    onPress={() => {
                       navigation.navigate("Comments", {
                         postId: item.id,
                         image: item.image,
-                      })
-                    }
+                      });
+                      dispatch(pathSlice.actions.setPath({ path: route.name }));
+                    }}
                   >
                     <Text style={styles.comments}>{item.comments}</Text>
 
@@ -239,12 +244,15 @@ export default function ProfileScreen({ navigation }) {
 
                   <TouchableOpacity
                     style={styles.locationWrap}
-                    onPress={() =>
+                    onPress={() => {
                       navigation.navigate("Map", {
                         location: item.location,
                         title: item.locationTitle,
-                      })
-                    }
+                      }),
+                        dispatch(
+                          pathSlice.actions.setPath({ path: route.name })
+                        );
+                    }}
                   >
                     <Feather name="map-pin" size={24} color="#BDBDBD" />
                     <Text style={styles.locationTitle}>

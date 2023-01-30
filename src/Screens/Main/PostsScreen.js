@@ -20,9 +20,14 @@ import {
   onSnapshot,
 } from "firebase/firestore";
 import { db } from "../../firebase/config";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { pathSlice } from "../../redux/path/pathReducer";
 
 export default function DefaultPostScreen({ route, navigation }) {
+  console.log("navigation", navigation.canGoBack);
+
+  const dispatch = useDispatch();
+
   const [posts, setPosts] = useState([]);
   const { email, login, avatar, userId } = useSelector((state) => state.auth);
 
@@ -139,12 +144,13 @@ export default function DefaultPostScreen({ route, navigation }) {
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.location}
-                  onPress={() =>
+                  onPress={() => {
                     navigation.navigate("Map", {
                       location: item.location,
                       title: item.locationTitle,
-                    })
-                  }
+                    }),
+                      dispatch(pathSlice.actions.setPath({ path: route.name }));
+                  }}
                 >
                   <Feather name="map-pin" size={24} color="#BDBDBD" />
                   <Text style={styles.locationTitle}>{item.locationTitle}</Text>

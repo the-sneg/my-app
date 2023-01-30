@@ -42,7 +42,7 @@ export default function CommentsScreen({ route }) {
 
   useEffect(() => {
     const unsubscribe = onSnapshot(
-      collection(db, "posts", `${postId}`, "comments"),
+      collection(db, "posts"),
       (snapshot) => {
         getAllComments();
         console.log("2222222222222");

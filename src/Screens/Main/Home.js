@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { useRoute } from "@react-navigation/native";
 
 import PostScreen from "./PostsScreen";
 import CreatePostScreen from "./CreatePostsScreen";
@@ -11,19 +12,23 @@ import MapScreen from "./MapScreen";
 const MainTab = createBottomTabNavigator();
 import { Feather } from "@expo/vector-icons";
 import { authSignOutUser } from "../../redux/auth/authOperations";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
-export default function Home({ navigation }) {
+export default function Home({ navigation, route }) {
+  console.log("home", route);
+  const { path } = useSelector((state) => state.path);
+
   const dispatch = useDispatch();
 
   const logOut = () => {
     dispatch(authSignOutUser());
   };
+
+  const routes = useRoute();
+  console.log("useRoute", routes.params);
+
   return (
-    <MainTab.Navigator
-      screenOptions={{ tabBarShowLabel: false }}
-      // backBehavior="order"
-    >
+    <MainTab.Navigator screenOptions={{ tabBarShowLabel: false }}>
       <MainTab.Screen
         options={{
           headerTitleAlign: "center",
@@ -71,8 +76,13 @@ export default function Home({ navigation }) {
       />
       <MainTab.Screen
         options={{
+          unmountOnBlur: "true",
           headerLeft: () => (
-            <TouchableOpacity onPress={() => navigation.navigate("Posts")}>
+            <TouchableOpacity
+              onPress={() => {
+                path ? navigation.navigate(path) : navigation.navigate("Posts");
+              }}
+            >
               <Feather
                 name="arrow-left"
                 size={24}
@@ -92,8 +102,13 @@ export default function Home({ navigation }) {
       />
       <MainTab.Screen
         options={{
+          unmountOnBlur: "true",
           headerLeft: () => (
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                path ? navigation.navigate(path) : navigation.navigate("Posts");
+              }}
+            >
               <Feather
                 name="arrow-left"
                 size={24}
