@@ -1,6 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
+
 import * as ImagePicker from "expo-image-picker";
+import { Camera, CameraType } from "expo-camera";
+import * as Location from "expo-location";
+import { FontAwesome5, Feather } from "@expo/vector-icons";
+
+import { collection, addDoc } from "firebase/firestore";
+import { db } from "../../firebase/config";
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
 
 import {
   StyleSheet,
@@ -15,21 +28,8 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-import { Camera, CameraType } from "expo-camera";
-import * as Location from "expo-location";
 
-import { FontAwesome5 } from "@expo/vector-icons";
-import { Feather } from "@expo/vector-icons";
-import { db } from "../../firebase/config";
-import {
-  getDownloadURL,
-  getStorage,
-  ref,
-  uploadBytesResumable,
-} from "firebase/storage";
-import { collection, addDoc } from "firebase/firestore";
 import uuid from "react-native-uuid";
-import { useIsFocused } from "@react-navigation/native";
 
 export default function CreatePostScreen({ navigation }) {
   const [camera, setCamera] = useState(null);
@@ -45,7 +45,6 @@ export default function CreatePostScreen({ navigation }) {
   const [location, setLocation] = useState(null);
 
   const { userId, nickname, avatar } = useSelector((state) => state.auth);
- 
 
   const keyboardHide = () => {
     setIsShowKeyboard(false);
@@ -61,8 +60,6 @@ export default function CreatePostScreen({ navigation }) {
       hideKeyboard.remove();
     };
   }, []);
-
-  
 
   useEffect(() => {
     (async () => {

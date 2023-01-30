@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   StyleSheet,
   View,
@@ -9,9 +9,14 @@ import {
   ImageBackground,
   ActivityIndicator,
 } from "react-native";
-import { useSelector, useDispatch } from "react-redux";
 import Svg, { Circle, Path } from "react-native-svg";
+
+import { useSelector, useDispatch } from "react-redux";
+import { updateAvatar, authSignOutUser } from "../../redux/auth/authOperations";
+import { pathSlice } from "../../redux/path/pathReducer";
+
 import * as ImagePicker from "expo-image-picker";
+import { Feather, AntDesign, Ionicons } from "@expo/vector-icons";
 
 import {
   collection,
@@ -23,30 +28,43 @@ import {
   arrayRemove,
   arrayUnion,
   doc,
+  onSnapshot,
 } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { db, storage } from "../../firebase/config";
-import { Feather, AntDesign, Ionicons } from "@expo/vector-icons";
-import { useIsFocused } from "@react-navigation/native";
-import { updateAvatar, authSignOutUser } from "../../redux/auth/authOperations";
-import { pathSlice } from "../../redux/path/pathReducer";
 
 export default function ProfileScreen({ navigation, route }) {
   const { userId, avatar, nickname } = useSelector((state) => state.auth);
   const [loading, setLoading] = useState(false);
   const [userPosts, setUserPosts] = useState([]);
-  // console.log("userPostss", userPosts);
 
   const logOut = () => {
     dispatch(authSignOutUser());
   };
 
   const dispatch = useDispatch();
-  const isFocused = useIsFocused();
+
+  const flatListRef = useRef();
+  const toTop = () => {
+    flatListRef.current.scrollToOffset({ animated: true, offset: 0 });
+  };
 
   useEffect(() => {
-    getUserPosts();
-  }, [userPosts, isFocused]);
+    const unsubscribe = onSnapshot(
+      collection(db, "posts"),
+      (snapshot) => {
+        getUserPosts();
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    toTop();
+  }, []);
 
   const getUserPosts = async () => {
     const q = query(collection(db, "posts"), where("userId", "==", userId));
@@ -186,6 +204,7 @@ export default function ProfileScreen({ navigation, route }) {
           <Text style={styles.nickname}>{nickname}</Text>
         </View>
         <FlatList
+          ref={flatListRef}
           style={{
             backgroundColor: "#fff",
           }}

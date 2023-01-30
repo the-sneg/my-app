@@ -1,8 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useSelector } from "react-redux";
-import { db } from "../../firebase/config";
-import { Feather } from "@expo/vector-icons";
-
 import {
   StyleSheet,
   View,
@@ -13,17 +9,20 @@ import {
   FlatList,
   Image,
 } from "react-native";
+import { useSelector } from "react-redux";
 
+import { db } from "../../firebase/config";
 import {
   getDocs,
   collection,
   doc,
   onSnapshot,
-  getDoc,
   addDoc,
   updateDoc,
   increment,
 } from "firebase/firestore";
+
+import { Feather } from "@expo/vector-icons";
 
 export default function CommentsScreen({ route }) {
   const { postId, image } = route.params;

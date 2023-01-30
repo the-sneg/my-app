@@ -1,7 +1,12 @@
 import React from "react";
+
 import { StyleSheet, TouchableOpacity } from "react-native";
+
+import { useDispatch, useSelector } from "react-redux";
+
+import { authSignOutUser } from "../../redux/auth/authOperations";
+
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { useRoute } from "@react-navigation/native";
 
 import PostScreen from "./PostsScreen";
 import CreatePostScreen from "./CreatePostsScreen";
@@ -9,13 +14,9 @@ import ProfileScreen from "./ProfileScreen";
 import CommentsScreen from "./CommentsScreen";
 import MapScreen from "./MapScreen";
 
-const MainTab = createBottomTabNavigator();
 import { Feather } from "@expo/vector-icons";
-import { authSignOutUser } from "../../redux/auth/authOperations";
-import { useDispatch, useSelector } from "react-redux";
 
 export default function Home({ navigation, route }) {
-  console.log("home", route);
   const { path } = useSelector((state) => state.path);
 
   const dispatch = useDispatch();
@@ -24,8 +25,7 @@ export default function Home({ navigation, route }) {
     dispatch(authSignOutUser());
   };
 
-  const routes = useRoute();
-  console.log("useRoute", routes.params);
+  const MainTab = createBottomTabNavigator();
 
   return (
     <MainTab.Navigator screenOptions={{ tabBarShowLabel: false }}>

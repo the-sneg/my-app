@@ -7,8 +7,12 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import { useIsFocused } from "@react-navigation/native";
+
+import { useSelector, useDispatch } from "react-redux";
+import { pathSlice } from "../../redux/path/pathReducer";
+
 import { AntDesign, Ionicons, Feather } from "@expo/vector-icons";
+
 import {
   getDocs,
   getDoc,
@@ -20,16 +24,12 @@ import {
   onSnapshot,
 } from "firebase/firestore";
 import { db } from "../../firebase/config";
-import { useSelector, useDispatch } from "react-redux";
-import { pathSlice } from "../../redux/path/pathReducer";
 
 export default function DefaultPostScreen({ route, navigation }) {
-  console.log("navigation", navigation.canGoBack);
-
   const dispatch = useDispatch();
 
   const [posts, setPosts] = useState([]);
-  const { email, login, avatar, userId } = useSelector((state) => state.auth);
+  const { userId } = useSelector((state) => state.auth);
 
   const flatListRef = useRef();
   const toTop = () => {
@@ -57,14 +57,11 @@ export default function DefaultPostScreen({ route, navigation }) {
     setPosts(sortedPosts);
   };
 
-  const isFocused = useIsFocused();
-
   useEffect(() => {
     const unsubscribe = onSnapshot(
       collection(db, "posts"),
       (snapshot) => {
         getAllPosts();
-        console.log("1111111111111");
       },
       (error) => {
         console.log(error);
