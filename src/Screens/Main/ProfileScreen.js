@@ -36,6 +36,10 @@ export default function ProfileScreen({ navigation }) {
   const [userPosts, setUserPosts] = useState([]);
   // console.log("userPostss", userPosts);
 
+  const logOut = () => {
+    dispatch(authSignOutUser());
+  };
+
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
 
@@ -47,11 +51,23 @@ export default function ProfileScreen({ navigation }) {
     const q = query(collection(db, "posts"), where("userId", "==", userId));
     const querySnapshot = await getDocs(q);
 
-    let newPosts = [];
+    let allPosts = [];
     querySnapshot.forEach((doc) => {
-      newPosts.push({ ...doc.data(), id: doc.id });
+      allPosts.push({ ...doc.data(), id: doc.id });
     });
-    setUserPosts(newPosts);
+
+    const sortedPosts = allPosts.sort(function (a, b) {
+      if (a.date > b.date) {
+        return -1;
+      }
+      if (a.date < b.date) {
+        return 1;
+      }
+
+      return 0;
+    });
+
+    setUserPosts(sortedPosts);
   };
 
   const addLike = async (id) => {
@@ -117,23 +133,25 @@ export default function ProfileScreen({ navigation }) {
             ></Image>
             <TouchableOpacity style={styles.addBtnBox} onPress={pickImage}>
               <Svg
+                style={{ transform: [{ rotate: "45deg" }] }}
                 xmlns="http://www.w3.org/2000/svg"
                 width="25"
                 height="25"
-                fill="none"
+                fill="#fff"
                 viewBox="0 0 25 25"
               >
                 <Circle
                   cx="12.5"
                   cy="12.5"
                   r="12"
-                  fill="none"
-                  stroke="#FF6C00"
+                  fill="#fff"
+                  stroke="#BDBDBD"
                 ></Circle>
                 <Path
-                  fill="#FF6C00"
+                  fill="#BDBDBD"
                   fillRule="evenodd"
-                  d="M13 6h-1v6H6v1h6v6h1v-6h6v-1h-6V6z"
+                  d="M13
+                  6h-1v6H6v1h6v6h1v-6h6v-1h-6V6z"
                   clipRule="evenodd"
                 ></Path>
               </Svg>
@@ -152,12 +170,23 @@ export default function ProfileScreen({ navigation }) {
             justifyContent: "flex-end",
           }}
         >
+          <TouchableOpacity onPress={logOut}>
+            <Feather
+              name="log-out"
+              size={24}
+              color="#BDBDBD"
+              style={{ marginLeft: 300 }}
+            />
+          </TouchableOpacity>
+
           <Text style={styles.nickname}>{nickname}</Text>
         </View>
         <FlatList
           style={{
             backgroundColor: "#fff",
           }}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingTop: 32 }}
           data={userPosts}
           keyExtractor={(item, indx) => indx.toString()}
           renderItem={({ item }) => (
@@ -274,8 +303,8 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   postWrap: {
-    marginTop: 32,
     marginHorizontal: 16,
+    marginBottom: 32,
   },
   postTitle: {
     marginBottom: 12,

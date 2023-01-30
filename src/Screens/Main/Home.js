@@ -62,16 +62,6 @@ export default function Home({ navigation }) {
         options={{
           headerTitleAlign: "center",
           headerTitle: "Профиль",
-          headerRight: ({ focused, color, size }) => (
-            <TouchableOpacity onPress={logOut}>
-              <Feather
-                name="log-out"
-                size={24}
-                color="#BDBDBD"
-                style={{ paddingRight: 16 }}
-              />
-            </TouchableOpacity>
-          ),
           tabBarIcon: ({ focused: boolean, color: red, size: number }) => (
             <Feather name="user" size={24} color="rgba(33, 33, 33, 0.8)" />
           ),

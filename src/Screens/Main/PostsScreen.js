@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   StyleSheet,
   View,
@@ -26,24 +26,55 @@ export default function DefaultPostScreen({ route, navigation }) {
   const [posts, setPosts] = useState([]);
   const { email, login, avatar, userId } = useSelector((state) => state.auth);
 
+  const flatListRef = useRef();
+  const toTop = () => {
+    flatListRef.current.scrollToOffset({ animated: true, offset: 0 });
+  };
+
   const getAllPosts = async () => {
     const querySnapshot = await getDocs(collection(db, "posts"));
-    let newPosts = [];
+    let allPosts = [];
     querySnapshot.forEach((doc) => {
-      newPosts.push({ ...doc.data(), id: doc.id });
+      allPosts.push({ ...doc.data(), id: doc.id });
     });
-    setPosts(newPosts);
+
+    const sortedPosts = allPosts.sort(function (a, b) {
+      if (a.date > b.date) {
+        return -1;
+      }
+      if (a.date < b.date) {
+        return 1;
+      }
+
+      return 0;
+    });
+
+    setPosts(sortedPosts);
   };
 
   const isFocused = useIsFocused();
 
   useEffect(() => {
-    getAllPosts();
-  }, [posts, isFocused]);
+    const unsubscribe = onSnapshot(
+      collection(db, "posts"),
+      (snapshot) => {
+        getAllPosts();
+        console.log("1111111111111");
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    toTop();
+  }, []);
 
   const addLike = async (id) => {
     const result = await getDoc(doc(db, "posts", `${id}`));
-    console.log("result", result.data());
+
     if (result.data().likes.includes(`${userId}`)) {
       await updateDoc(doc(db, "posts", `${id}`), {
         likes: arrayRemove(`${userId}`),
@@ -58,6 +89,9 @@ export default function DefaultPostScreen({ route, navigation }) {
   return (
     <View style={styles.container}>
       <FlatList
+        ref={flatListRef}
+        contentContainerStyle={{ paddingTop: 32 }}
+        showsVerticalScrollIndicator={false}
         data={posts}
         keyExtractor={(item, indx) => indx.toString()}
         renderItem={({ item }) => (
@@ -127,8 +161,6 @@ export default function DefaultPostScreen({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginHorizontal: 16,
-    paddingTop: 32,
   },
 
   postImg: {
@@ -138,6 +170,7 @@ const styles = StyleSheet.create({
   },
   postWrap: {
     marginBottom: 32,
+    marginHorizontal: 16,
   },
   postTitle: {
     marginBottom: 12,

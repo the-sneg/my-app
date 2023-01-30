@@ -69,7 +69,7 @@ export default function CreatePostScreen({ navigation }) {
       const { status } = await Camera.requestCameraPermissionsAsync();
       setHasPermission(status === "granted");
     })();
-  }, [camera, isFocused]);
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -125,6 +125,9 @@ export default function CreatePostScreen({ navigation }) {
   };
 
   const uploadPostToServer = async () => {
+    const date = new Date().toLocaleString();
+    const datess = 6;
+    const dates = new Date().toLocaleString();
     const image = await uploadPhotoToServer();
 
     const createPost = await addDoc(collection(db, "posts"), {
@@ -132,6 +135,7 @@ export default function CreatePostScreen({ navigation }) {
       nickname,
       avatar,
       image,
+      date,
       imageTitle,
       location,
       locationTitle,

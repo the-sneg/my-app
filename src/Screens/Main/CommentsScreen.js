@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   StyleSheet,
   View,
@@ -32,14 +32,32 @@ export default function CommentsScreen({ route }) {
   const { nickname, userId, avatar } = useSelector((state) => state.auth);
   const isFocused = useIsFocused();
 
-  console.log("allComments", image);
+  const flatListRef = useRef();
+  const toBot = () => {
+    flatListRef.current.scrollToEnd({ animated: true });
+  };
+  useEffect(() => {
+    toBot();
+  }, []);
 
   useEffect(() => {
-    getAllPosts();
-  }, [allComments, isFocused]);
+    const unsubscribe = onSnapshot(
+      collection(db, "posts", `${postId}`, "comments"),
+      (snapshot) => {
+        getAllComments();
+        console.log("2222222222222");
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+    return () => unsubscribe();
+  }, []);
 
-  const createPost = async () => {
+  const createComment = async () => {
     const date = new Date().toLocaleString();
+
+    console.log("date", date);
     const querySnapshot = await addDoc(
       collection(db, "posts", `${postId}`, "comments"),
       {
@@ -53,17 +71,30 @@ export default function CommentsScreen({ route }) {
     await updateDoc(doc(db, "posts", `${postId}`), {
       comments: increment(1),
     });
+    toBot();
   };
 
-  const getAllPosts = async () => {
+  const getAllComments = async () => {
     const querySnapshot = await getDocs(
       collection(db, "posts", `${postId}`, "comments")
     );
-    let comments = [];
+    let allComments = [];
     querySnapshot.forEach((doc) => {
-      comments.push({ ...doc.data(), id: doc.id });
+      allComments.push({ ...doc.data(), id: doc.id });
     });
-    setAllComments(comments);
+
+    const sortedComments = allComments.sort(function (a, b) {
+      if (a.date > b.date) {
+        return 1;
+      }
+      if (a.date < b.date) {
+        return -1;
+      }
+
+      return 0;
+    });
+
+    setAllComments(sortedComments);
   };
 
   return (
@@ -72,6 +103,8 @@ export default function CommentsScreen({ route }) {
         <SafeAreaView style={styles.containerSafe}>
           <Image source={{ uri: image }} style={styles.postImg} />
           <FlatList
+            ref={flatListRef}
+            showsVerticalScrollIndicator={false}
             data={allComments}
             renderItem={({ item }) => (
               <View
@@ -115,15 +148,12 @@ export default function CommentsScreen({ route }) {
         <View style={styles.submitCommentWrap}>
           <View>
             <TextInput
-              style={{
-                ...styles.input,
-                
-              }}
+              style={styles.input}
               placeholder={"Комментировать..."}
               onChangeText={setComment}
             ></TextInput>
           </View>
-          <TouchableOpacity style={styles.publishWrap} onPress={createPost}>
+          <TouchableOpacity style={styles.publishWrap} onPress={createComment}>
             <Feather
               name="arrow-up"
               size={24}
@@ -147,11 +177,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   input: {
-    borderBottomWidth: 1,
     height: 30,
     fontSize: 16,
     borderColor: "#E8E8E8",
     marginBottom: 20,
+    paddingLeft: 16,
   },
   submitCommentWrap: {
     flexDirection: "row",
