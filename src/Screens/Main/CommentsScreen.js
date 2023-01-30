@@ -1,4 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useSelector } from "react-redux";
+import { db } from "../../firebase/config";
+import { Feather } from "@expo/vector-icons";
+
 import {
   StyleSheet,
   View,
@@ -10,8 +14,6 @@ import {
   Image,
 } from "react-native";
 
-import { useSelector } from "react-redux";
-import { db } from "../../firebase/config";
 import {
   getDocs,
   collection,
@@ -22,15 +24,12 @@ import {
   updateDoc,
   increment,
 } from "firebase/firestore";
-import { useIsFocused } from "@react-navigation/native";
-import { Feather } from "@expo/vector-icons";
 
 export default function CommentsScreen({ route }) {
   const { postId, image } = route.params;
   const [comment, setComment] = useState("");
   const [allComments, setAllComments] = useState([]);
   const { nickname, userId, avatar } = useSelector((state) => state.auth);
-  const isFocused = useIsFocused();
 
   const flatListRef = useRef();
   const toBot = () => {
@@ -45,7 +44,6 @@ export default function CommentsScreen({ route }) {
       collection(db, "posts"),
       (snapshot) => {
         getAllComments();
-        console.log("2222222222222");
       },
       (error) => {
         console.log(error);

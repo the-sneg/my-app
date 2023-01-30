@@ -45,7 +45,7 @@ export default function CreatePostScreen({ navigation }) {
   const [location, setLocation] = useState(null);
 
   const { userId, nickname, avatar } = useSelector((state) => state.auth);
-  console.log("nickname", nickname);
+ 
 
   const keyboardHide = () => {
     setIsShowKeyboard(false);
@@ -62,7 +62,7 @@ export default function CreatePostScreen({ navigation }) {
     };
   }, []);
 
-  const isFocused = useIsFocused();
+  
 
   useEffect(() => {
     (async () => {
@@ -126,8 +126,7 @@ export default function CreatePostScreen({ navigation }) {
 
   const uploadPostToServer = async () => {
     const date = new Date().toLocaleString();
-    const datess = 6;
-    const dates = new Date().toLocaleString();
+
     const image = await uploadPhotoToServer();
 
     const createPost = await addDoc(collection(db, "posts"), {
