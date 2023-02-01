@@ -11,6 +11,7 @@
   "dependencies": {
     "@expo/vector-icons": "^13.0.0",
     "@expo/webpack-config": "^0.17.2",
+    "@react-native-async-storage/async-storage": "~1.17.3",
     "@react-navigation/bottom-tabs": "^6.5.3",
     "@react-navigation/native": "^6.1.2",
     "@react-navigation/native-stack": "^6.9.8",
@@ -19,9 +20,11 @@
     "expo": "~47.0.12",
     "expo-camera": "~13.1.0",
     "expo-font": "^11.0.1",
+    "expo-image-picker": "~14.0.2",
     "expo-location": "~15.0.1",
     "expo-splash-screen": "^0.17.5",
     "expo-status-bar": "~1.4.2",
+    "expo-updates": "~0.15.6",
     "firebase": "^9.16.0",
     "react": "18.1.0",
     "react-dom": "18.1.0",
@@ -33,9 +36,7 @@
     "react-native-uuid": "^2.0.1",
     "react-native-web": "~0.18.9",
     "react-navigation": "^4.4.4",
-    "react-redux": "^8.0.5",
-    "expo-updates": "~0.15.6",
-    "expo-image-picker": "~14.0.2"
+    "react-redux": "^8.0.5"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"
