@@ -3,8 +3,8 @@ import { useCallback, useEffect } from "react";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { Provider } from "react-redux";
-import { store } from "./redux/store";
-import { Main } from "./components/main";
+import { store } from "./src/redux/store";
+import { Main } from "./src/components/main";
 
 export default function App() {
   useEffect(() => {
@@ -20,9 +20,9 @@ export default function App() {
   }, []);
 
   const [fontsLoaded] = useFonts({
-    "DMMono-Medium": require("../assets/fonts/DMMono-Medium.ttf"),
-    "DMMono-MediumItalic": require("../assets/fonts/DMMono-MediumItalic.ttf"),
-    "DMMono-Regular": require("../assets/fonts/DMMono-Regular.ttf"),
+    "DMMono-Medium": require("./assets/fonts/DMMono-Medium.ttf"),
+    "DMMono-MediumItalic": require("./assets/fonts/DMMono-MediumItalic.ttf"),
+    "DMMono-Regular": require("./assets/fonts/DMMono-Regular.ttf"),
   });
 
   const onLayoutRootView = useCallback(async () => {

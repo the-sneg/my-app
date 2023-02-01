@@ -66,14 +66,7 @@ export default function LoginScreen({ navigation }) {
               }}
             >
               <View style={styles.header}>
-                <Text
-                  style={
-                    (styles.headerTitle,
-                    { fontFamily: "DMMono-Medium", fontSize: 30 })
-                  }
-                >
-                  Войти
-                </Text>
+                <Text style={styles.headerTitle}>Войти</Text>
               </View>
               <View style={{ marginBottom: 16 }}>
                 {/* <Text style={styles.inputTitle}>Email</Text> */}
