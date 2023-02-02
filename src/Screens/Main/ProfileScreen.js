@@ -130,7 +130,7 @@ export default function ProfileScreen({ navigation, route }) {
         setLoading(true);
         const avatar = await uploadPhotoToServer(result.assets[0].uri);
 
-        dispatch(updateAvatar(avatar));
+        await dispatch(updateAvatar(avatar));
         setLoading(false);
       }
     } catch (error) {
@@ -176,7 +176,13 @@ export default function ProfileScreen({ navigation, route }) {
               </Svg>
             </TouchableOpacity>
           </View>
-          {loading && <ActivityIndicator style={styles.loader} />}
+          {loading && (
+            <ActivityIndicator
+              style={styles.loader}
+              color={"#FF6C00"}
+              size={50}
+            />
+          )}
         </View>
         <View
           style={{
@@ -308,6 +314,8 @@ const styles = StyleSheet.create({
     width: 120,
     backgroundColor: "#F6F6F6",
     borderRadius: 16,
+    borderWidth: 1,
+    borderColor: "#BDBDBD",
   },
   addBtnBox: {
     position: "absolute",
@@ -322,10 +330,11 @@ const styles = StyleSheet.create({
   loader: {
     position: "absolute",
     top: 50,
+    bottom: 50,
   },
   postImg: {
     height: 240,
-    borderRadius: 16,
+    borderRadius: 8,
     marginBottom: 8,
   },
   postWrap: {

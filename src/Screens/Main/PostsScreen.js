@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
 
   postImg: {
     height: 240,
-    borderRadius: 16,
+    borderRadius: 8,
     marginBottom: 8,
   },
   postWrap: {

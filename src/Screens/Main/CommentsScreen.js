@@ -42,6 +42,11 @@ export default function CommentsScreen({ route }) {
     flatListRef.current.scrollToEnd({ animation: true });
   };
 
+  const input = useRef();
+  const clear = () => {
+    input.current.clear();
+  };
+
   useEffect(() => {
     toBot();
   }, []);
@@ -113,6 +118,7 @@ export default function CommentsScreen({ route }) {
     createComment();
     toBot();
     keyboardHide();
+    clear();
   };
 
   return (
@@ -171,6 +177,7 @@ export default function CommentsScreen({ route }) {
                 style={styles.input}
                 placeholder={"Комментировать..."}
                 onChangeText={setComment}
+                ref={input}
               ></TextInput>
             </View>
             <TouchableOpacity
@@ -233,7 +240,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 32,
     marginTop: 32,
-    // display: "none",
   },
   commentWrap: {
     flexDirection: "row",

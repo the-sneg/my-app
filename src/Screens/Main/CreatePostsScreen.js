@@ -27,6 +27,7 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
+  ActivityIndicator,
 } from "react-native";
 
 import uuid from "react-native-uuid";
@@ -46,6 +47,8 @@ export default function CreatePostScreen({ navigation }) {
   const [imageTitle, setImageTitle] = useState("");
   const [locationTitle, setLocationTitle] = useState("");
   const [location, setLocation] = useState(null);
+
+  const [loading, setLoading] = useState(false);
 
   const { userId, nickname, avatar } = useSelector((state) => state.auth);
 
@@ -83,9 +86,11 @@ export default function CreatePostScreen({ navigation }) {
 
   if (hasPermission === null) {
     return (
-      <View>
-        <Text>Loading</Text>
-      </View>
+      <ActivityIndicator
+        style={{ ...styles.loader, backgroundColor: "#00000020" }}
+        color={"#FF6C00"}
+        size={100}
+      />
     );
   }
   if (hasPermission === false) {
@@ -98,10 +103,12 @@ export default function CreatePostScreen({ navigation }) {
   }
 
   const takePhoto = async () => {
+    setLoading(true);
     const photo = await camera.takePictureAsync();
     let locationRef = await Location.getCurrentPositionAsync({});
     setLocation(locationRef);
     setPhoto(photo.uri);
+    setLoading(false);
   };
 
   const uploadImage = async () => {
@@ -111,12 +118,13 @@ export default function CreatePostScreen({ navigation }) {
       aspect: [4, 3],
       quality: 1,
     });
-
+    setLoading(true);
     if (!result.canceled) {
       let locationRef = await Location.getCurrentPositionAsync({});
       setLocation(locationRef);
       setPhoto(result.assets[0].uri);
     }
+    setLoading(false);
   };
 
   const sendPhoto = async () => {
@@ -172,13 +180,25 @@ export default function CreatePostScreen({ navigation }) {
                 display: isShowKeyboard ? "none" : "flex",
               }}
             >
-              <Camera style={styles.camera} ref={setCamera} type={type}>
+              <Camera
+                style={styles.camera}
+                ref={setCamera}
+                type={type}
+                ratio={"1:1"}
+              >
                 {photo && (
                   <View style={styles.photoContainer}>
                     <Image style={styles.photo} source={{ uri: photo }} />
                   </View>
                 )}
                 <TouchableOpacity style={styles.snapWrap} onPress={takePhoto}>
+                  {loading && (
+                    <ActivityIndicator
+                      style={styles.loader}
+                      color={"#FF6C00"}
+                      size={50}
+                    />
+                  )}
                   <FontAwesome5 name="camera" size={24} color="#BDBDBD" />
                 </TouchableOpacity>
               </Camera>
@@ -237,6 +257,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: "20%",
   },
+  loader: {
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    zIndex: 1,
+  },
 
   cameraWrap: {
     height: 240,
@@ -249,7 +277,6 @@ const styles = StyleSheet.create({
     color: "#BDBDBD",
   },
   snapWrap: {
-    // backgroundColor: "rgba(255, 255, 255, 0.3);",
     backgroundColor: "#FFFFFF",
     width: 60,
     height: 60,
@@ -259,12 +286,12 @@ const styles = StyleSheet.create({
   },
 
   publish: {
-    color: "#BDBDBD",
+    color: "#ffffff",
     fontSize: 16,
   },
   publishWrap: {
     height: 51,
-    backgroundColor: "#F6F6F6",
+    backgroundColor: "#FF6C00",
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 100,
@@ -275,10 +302,12 @@ const styles = StyleSheet.create({
     left: 0,
     borderWidth: 1,
     borderColor: "#112233",
+    borderRadius: 8,
   },
   photo: {
-    width: 100,
+    width: 130,
     height: 100,
+    borderRadius: 8,
   },
 
   input: {

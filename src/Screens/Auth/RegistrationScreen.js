@@ -25,6 +25,7 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   Image,
+  ActivityIndicator,
 } from "react-native";
 
 const initialState = {
@@ -39,8 +40,7 @@ export default function RegistrationScreen({ navigation }) {
   const [state, setState] = useState(initialState);
   const [isSecureTextEntry, IsSecureTextEntry] = useState(true);
   const [avatar, setAvatar] = useState(null);
-  console.log("state", state);
-  console.log("avatar", avatar);
+  const [loading, setLoading] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -59,10 +59,12 @@ export default function RegistrationScreen({ navigation }) {
     Keyboard.dismiss();
   };
   const keyboardHideAndSubmit = async () => {
+    setLoading(true);
     keyboardHide();
     uploadAvararToServer();
     setState(initialState);
-    dispatch(authSignUpUser(state));
+    await dispatch(authSignUpUser(state));
+    setLoading(false);
   };
 
   const pickImage = async () => {
@@ -103,6 +105,15 @@ export default function RegistrationScreen({ navigation }) {
           style={styles.image}
           source={require("../../../assets/img/background.png")}
         >
+          {loading && (
+            <View style={styles.loaderWrap}>
+              <ActivityIndicator
+                size={100}
+                color="#FF6C00"
+                style={styles.loader}
+              />
+            </View>
+          )}
           <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : "null"}
           >
@@ -234,6 +245,24 @@ const styles = StyleSheet.create({
     flex: 1,
     resizeMode: "cover",
     justifyContent: "flex-end",
+  },
+  loaderWrap: {
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    zIndex: 1,
+    backgroundColor: "#857d7d7d",
+    height: "100%",
+  },
+  loader: {
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    zIndex: 1,
   },
   input: {
     height: 50,

@@ -16,6 +16,7 @@ import {
 
 import { authSignInUser } from "../../redux/auth/authOperations";
 import { useDispatch } from "react-redux";
+import { async } from "@firebase/util";
 
 const initialState = {
   email: "",
@@ -41,15 +42,15 @@ export default function LoginScreen({ navigation }) {
   }, []);
 
   const keyboardHide = () => {
-    setLoading(true);
     setIsShowKeyboard(false);
     Keyboard.dismiss();
   };
-  const keyboardHideAndSubmit = () => {
+  const keyboardHideAndSubmit = async () => {
     setLoading(true);
     keyboardHide();
     setState(initialState);
-    dispatch(authSignInUser(state));
+    await dispatch(authSignInUser(state));
+    setLoading(false);
   };
 
   return (
@@ -59,6 +60,15 @@ export default function LoginScreen({ navigation }) {
           style={styles.image}
           source={require("../../../assets/img/background.png")}
         >
+          {loading && (
+            <View style={styles.loaderWrap}>
+              <ActivityIndicator
+                size={100}
+                color="#FF6C00"
+                style={styles.loader}
+              />
+            </View>
+          )}
           <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : "height"}
           >
@@ -68,13 +78,6 @@ export default function LoginScreen({ navigation }) {
                 marginBottom: isShowKeyboard ? -200 : 0,
               }}
             >
-              {loading && (
-                <ActivityIndicator
-                  style={styles.loader}
-                  size={100}
-                  color="red"
-                />
-              )}
               <View style={styles.header}>
                 <Text style={styles.headerTitle}>Войти</Text>
               </View>
@@ -151,11 +154,23 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
 
+  loaderWrap: {
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    zIndex: 1,
+    backgroundColor: "#00000020",
+    height: "100%",
+  },
   loader: {
     position: "absolute",
     top: 0,
+    bottom: 0,
     left: 0,
     right: 0,
+    zIndex: 1,
   },
   input: {
     textAlign: "left",
