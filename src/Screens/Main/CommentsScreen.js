@@ -8,6 +8,8 @@ import {
   SafeAreaView,
   FlatList,
   Image,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import { useSelector } from "react-redux";
 
@@ -24,16 +26,22 @@ import {
 
 import { Feather } from "@expo/vector-icons";
 
+import date from "date-and-time";
+import ru from "date-and-time/locale/ru";
+
 export default function CommentsScreen({ route }) {
   const { postId, image } = route.params;
   const [comment, setComment] = useState("");
   const [allComments, setAllComments] = useState([]);
+  const [isShowKeyboard, setIsShowKeyboard] = useState(false);
+
   const { nickname, userId, avatar } = useSelector((state) => state.auth);
 
   const flatListRef = useRef();
   const toBot = () => {
-    flatListRef.current.scrollToEnd({ animated: true });
+    flatListRef.current.scrollToEnd({ animation: true });
   };
+
   useEffect(() => {
     toBot();
   }, []);
@@ -51,17 +59,18 @@ export default function CommentsScreen({ route }) {
     return () => unsubscribe();
   }, []);
 
-  const createComment = async () => {
-    const date = new Date().toLocaleString();
+  date.locale(ru);
+  const now = new Date();
 
-    console.log("date", date);
+  const createComment = async () => {
+    const postDate = date.format(now, "DD MMMM, YYYY | HH:mm:ss");
     const querySnapshot = await addDoc(
       collection(db, "posts", `${postId}`, "comments"),
       {
         comment,
         nickname,
         userId,
-        date,
+        postDate,
         avatar,
       }
     );
@@ -81,10 +90,10 @@ export default function CommentsScreen({ route }) {
     });
 
     const sortedComments = allComments.sort(function (a, b) {
-      if (a.date > b.date) {
+      if (a.postDate > b.postDate) {
         return 1;
       }
-      if (a.date < b.date) {
+      if (a.postDate < b.postDate) {
         return -1;
       }
 
@@ -92,75 +101,93 @@ export default function CommentsScreen({ route }) {
     });
 
     setAllComments(sortedComments);
+    toBot();
+  };
+
+  const keyboardHide = () => {
+    setIsShowKeyboard(false);
+    Keyboard.dismiss();
+  };
+
+  const keyboardHideAndSubmit = () => {
+    createComment();
+    toBot();
+    keyboardHide();
   };
 
   return (
-    <View style={styles.container}>
-      <View style={{ flex: 1, marginHorizontal: 16 }}>
-        <SafeAreaView style={styles.containerSafe}>
-          <Image source={{ uri: image }} style={styles.postImg} />
-          <FlatList
-            ref={flatListRef}
-            showsVerticalScrollIndicator={false}
-            data={allComments}
-            renderItem={({ item }) => (
-              <View
-                style={{
-                  ...styles.commentWrap,
-                  flexDirection: item.userId === userId ? "row" : "row-reverse",
-                }}
-                onStartShouldSetResponder={() => true}
-              >
-                <View style={styles.comment}>
-                  <Text style={{ fontSize: 13, color: "#BDBDBD" }}>
-                    {item.nickname}
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      color: "#212121",
-                      marginTop: 8,
-                      marginBottom: 8,
-                    }}
-                  >
-                    {item.comment}
-                  </Text>
-                  <Text style={{ fontSize: 10, color: "#BDBDBD" }}>
-                    {item.date}
-                  </Text>
-                </View>
-                <Image
-                  source={{ uri: item.avatar }}
+    <TouchableWithoutFeedback onPress={keyboardHide}>
+      <View style={styles.container}>
+        <View style={{ flex: 1, marginHorizontal: 16 }}>
+          <SafeAreaView style={styles.containerSafe}>
+            <Image source={{ uri: image }} style={styles.postImg} />
+            <FlatList
+              ref={flatListRef}
+              showsVerticalScrollIndicator={false}
+              data={allComments}
+              renderItem={({ item }) => (
+                <View
                   style={{
-                    ...styles.avatar,
-                    marginLeft: item.userId === userId ? 16 : 0,
-                    marginRight: item.userId === userId ? 0 : 16,
+                    ...styles.commentWrap,
+                    flexDirection:
+                      item.userId === userId ? "row" : "row-reverse",
                   }}
-                ></Image>
-              </View>
-            )}
-            keyExtractor={(item) => item.id}
-          />
-        </SafeAreaView>
-        <View style={styles.submitCommentWrap}>
-          <View>
-            <TextInput
-              style={styles.input}
-              placeholder={"Комментировать..."}
-              onChangeText={setComment}
-            ></TextInput>
-          </View>
-          <TouchableOpacity style={styles.publishWrap} onPress={createComment}>
-            <Feather
-              name="arrow-up"
-              size={24}
-              color="#fff"
-              style={styles.publish}
+                  onStartShouldSetResponder={() => true}
+                >
+                  <View style={styles.comment}>
+                    <Text style={{ fontSize: 13, color: "#BDBDBD" }}>
+                      {item.nickname}
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        color: "#212121",
+                        marginTop: 8,
+                        marginBottom: 8,
+                      }}
+                    >
+                      {item.comment}
+                    </Text>
+                    <Text style={{ fontSize: 10, color: "#BDBDBD" }}>
+                      {item.postDate}
+                    </Text>
+                  </View>
+                  <Image
+                    source={{ uri: item.avatar }}
+                    style={{
+                      ...styles.avatar,
+                      marginLeft: item.userId === userId ? 16 : 0,
+                      marginRight: item.userId === userId ? 0 : 16,
+                    }}
+                  ></Image>
+                </View>
+              )}
+              keyExtractor={(item) => item.id}
             />
-          </TouchableOpacity>
+          </SafeAreaView>
+          <View style={styles.submitCommentWrap}>
+            <View>
+              <TextInput
+                style={styles.input}
+                placeholder={"Комментировать..."}
+                onChangeText={setComment}
+              ></TextInput>
+            </View>
+            <TouchableOpacity
+              style={styles.publishWrap}
+              onPress={keyboardHideAndSubmit}
+            >
+              <Feather
+                name="arrow-up"
+                size={24}
+                color="#fff"
+                style={styles.publish}
+              />
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -179,6 +206,7 @@ const styles = StyleSheet.create({
     borderColor: "#E8E8E8",
     marginBottom: 20,
     paddingLeft: 16,
+    paddingRight: 60,
   },
   submitCommentWrap: {
     flexDirection: "row",
@@ -218,6 +246,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 13,
     padding: 16,
+    marginBottom: 16,
   },
   avatar: {
     height: 28,

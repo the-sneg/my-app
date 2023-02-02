@@ -11,6 +11,7 @@ import {
   KeyboardAvoidingView,
   Keyboard,
   TouchableWithoutFeedback,
+  ActivityIndicator,
 } from "react-native";
 
 import { authSignInUser } from "../../redux/auth/authOperations";
@@ -25,6 +26,7 @@ export default function LoginScreen({ navigation }) {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [state, setState] = useState(initialState);
   const [isSecureTextEntry, IsSecureTextEntry] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -39,14 +41,15 @@ export default function LoginScreen({ navigation }) {
   }, []);
 
   const keyboardHide = () => {
+    setLoading(true);
     setIsShowKeyboard(false);
     Keyboard.dismiss();
   };
   const keyboardHideAndSubmit = () => {
+    setLoading(true);
     keyboardHide();
     setState(initialState);
     dispatch(authSignInUser(state));
-    // navigation.navigate("Home");
   };
 
   return (
@@ -65,6 +68,13 @@ export default function LoginScreen({ navigation }) {
                 marginBottom: isShowKeyboard ? -200 : 0,
               }}
             >
+              {loading && (
+                <ActivityIndicator
+                  style={styles.loader}
+                  size={100}
+                  color="red"
+                />
+              )}
               <View style={styles.header}>
                 <Text style={styles.headerTitle}>Войти</Text>
               </View>
@@ -138,8 +148,14 @@ const styles = StyleSheet.create({
   },
   image: {
     flex: 1,
-    resizeMode: "cover",
     justifyContent: "flex-end",
+  },
+
+  loader: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
   },
   input: {
     textAlign: "left",

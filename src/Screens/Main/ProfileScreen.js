@@ -209,7 +209,7 @@ export default function ProfileScreen({ navigation, route }) {
             backgroundColor: "#fff",
           }}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingTop: 32 }}
+          contentContainerStyle={{ paddingTop: 0 }}
           data={userPosts}
           keyExtractor={(item, indx) => indx.toString()}
           renderItem={({ item }) => (
@@ -294,7 +294,6 @@ const styles = StyleSheet.create({
   },
   background: {
     flex: 1,
-    resizeMode: "cover",
   },
   avatarWrap: {
     position: "absolute",
@@ -316,9 +315,9 @@ const styles = StyleSheet.create({
     bottom: 14,
   },
   nickname: {
-    fontSize: 20,
+    fontSize: 30,
     color: "#212121",
-    marginBottom: 15,
+    marginBottom: 10,
   },
   loader: {
     position: "absolute",

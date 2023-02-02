@@ -31,6 +31,7 @@ export default function Home({ navigation, route }) {
     <MainTab.Navigator screenOptions={{ tabBarShowLabel: false }}>
       <MainTab.Screen
         options={{
+          headerStatusBarHeight: 15,
           headerTitleAlign: "center",
           headerTitle: "Публикации",
           headerRight: ({ focused, color, size }) => (
@@ -52,6 +53,7 @@ export default function Home({ navigation, route }) {
       />
       <MainTab.Screen
         options={{
+          headerStatusBarHeight: 15,
           unmountOnBlur: "true",
           tabBarStyle: { display: "none" },
           headerTitleAlign: "center",
@@ -65,6 +67,7 @@ export default function Home({ navigation, route }) {
       />
       <MainTab.Screen
         options={{
+          headerStatusBarHeight: 15,
           headerTitleAlign: "center",
           headerTitle: "Профиль",
           tabBarIcon: ({ focused: boolean, color: red, size: number }) => (
@@ -76,6 +79,7 @@ export default function Home({ navigation, route }) {
       />
       <MainTab.Screen
         options={{
+          headerStatusBarHeight: 15,
           unmountOnBlur: "true",
           headerLeft: () => (
             <TouchableOpacity
@@ -102,6 +106,7 @@ export default function Home({ navigation, route }) {
       />
       <MainTab.Screen
         options={{
+          headerStatusBarHeight: 15,
           unmountOnBlur: "true",
           headerLeft: () => (
             <TouchableOpacity

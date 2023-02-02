@@ -31,6 +31,9 @@ import {
 
 import uuid from "react-native-uuid";
 
+import date from "date-and-time";
+import ru from "date-and-time/locale/ru";
+
 export default function CreatePostScreen({ navigation }) {
   const [camera, setCamera] = useState(null);
   const [photo, setPhoto] = useState("");
@@ -121,8 +124,11 @@ export default function CreatePostScreen({ navigation }) {
     navigation.navigate("Posts");
   };
 
+  date.locale(ru);
+  const now = new Date();
+
   const uploadPostToServer = async () => {
-    const date = new Date().toLocaleString();
+    const postDate = date.format(now, "DD MMMM, YYYY | HH:mm:ss");
 
     const image = await uploadPhotoToServer();
 
@@ -131,7 +137,7 @@ export default function CreatePostScreen({ navigation }) {
       nickname,
       avatar,
       image,
-      date,
+      postDate,
       imageTitle,
       location,
       locationTitle,
