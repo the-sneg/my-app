@@ -16,5 +16,6 @@ export const Main = () => {
   }, []);
 
   const routing = useRoute(state);
+
   return <NavigationContainer>{routing}</NavigationContainer>;
 };
