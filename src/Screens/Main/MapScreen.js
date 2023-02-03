@@ -1,12 +1,18 @@
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 
 export default function MapScreen({ route, navigation }) {
   const { latitude, longitude } = route.params.location.coords;
+  console.log("route.params.locationTitle", route.params);
   return (
     <View style={styles.container}>
-      <MapView
+      <Text>
+        {" "}
+        Need some money to view map... TITLE:
+        {(latitude, longitude, route.params.locationTitle)}{" "}
+      </Text>
+      {/* <MapView
         style={{ flex: 1 }}
         initialRegion={{
           latitude,
@@ -20,8 +26,9 @@ export default function MapScreen({ route, navigation }) {
             latitude,
             longitude,
           }}
+          title={route.params.locationTitle}
         />
-      </MapView>
+      </MapView> */}
     </View>
   );
 }

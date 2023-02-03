@@ -144,7 +144,8 @@ export default function DefaultPostScreen({ route, navigation }) {
                   onPress={() => {
                     navigation.navigate("Map", {
                       location: item.location,
-                      title: item.locationTitle,
+                      locationTitle: item.locationTitle,
+                      image: { uri: item.image },
                     }),
                       dispatch(pathSlice.actions.setPath({ path: route.name }));
                   }}

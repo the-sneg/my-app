@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "my-app",
+    "name": "Social App",
     "slug": "my-app",
-    "version": "1.0.0",
+    "version": "1.0.11",
     "orientation": "default",
-    "icon": "./assets/icon.webp",
-    "userInterfaceStyle": "light",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "cover",
@@ -22,7 +22,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icon.webp",
+        "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.sneg.social"
